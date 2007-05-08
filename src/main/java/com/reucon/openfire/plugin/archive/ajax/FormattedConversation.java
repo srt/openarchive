@@ -1,9 +1,9 @@
-package com.reucon.openfire.plugin.archiver.ajax;
+package com.reucon.openfire.plugin.archive.ajax;
 
-import com.reucon.openfire.plugin.archiver.model.ArchivedMessage;
-import com.reucon.openfire.plugin.archiver.model.Conversation;
-import com.reucon.openfire.plugin.archiver.model.Participant;
-import com.reucon.openfire.plugin.archiver.util.EscapeUtil;
+import com.reucon.openfire.plugin.archive.model.ArchivedMessage;
+import com.reucon.openfire.plugin.archive.model.Conversation;
+import com.reucon.openfire.plugin.archive.model.Participant;
+import com.reucon.openfire.plugin.archive.util.EscapeUtil;
 import org.jivesoftware.openfire.XMPPServer;
 import org.jivesoftware.openfire.user.UserManager;
 import org.jivesoftware.openfire.user.UserNotFoundException;

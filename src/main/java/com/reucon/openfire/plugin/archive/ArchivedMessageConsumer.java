@@ -1,6 +1,6 @@
-package com.reucon.openfire.plugin.archiver;
+package com.reucon.openfire.plugin.archive;
 
-import com.reucon.openfire.plugin.archiver.model.ArchivedMessage;
+import com.reucon.openfire.plugin.archive.model.ArchivedMessage;
 
 /**
  * Consumes an ArchivedMessage.

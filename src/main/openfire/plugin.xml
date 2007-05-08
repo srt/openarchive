@@ -2,7 +2,7 @@
 <plugin>
 
     <!-- Main plugin class -->
-    <class>com.reucon.openfire.plugin.archiver.ArchiverPlugin</class>
+    <class>com.reucon.openfire.plugin.archive.ArchiverPlugin</class>
     
     <!-- Plugin meta-data -->
     <name>${pom.name}</name>
@@ -20,12 +20,12 @@
 
         <tab id="tab-server">
             <sidebar id="sidebar-server-settings">
-               <item id="archiver-settings" name="Archiver Settings"
+               <item id="archiver-settings" name="${archive.settings.title}"
                    url="archiver-settings.jsp"
-                   description="Click to edit archiver settings" />
-               <item id="archiver-search" name="Archiver Search"
+                   description="${archive.settings.description}" />
+               <item id="archiver-search" name="${archive.settings.title}"
                    url="archiver-search.jsp"
-                   description="Click to search archive" />
+                   description="${archive.search.description}" />
             </sidebar>
 
         </tab>

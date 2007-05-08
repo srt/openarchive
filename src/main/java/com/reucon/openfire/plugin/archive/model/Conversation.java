@@ -1,4 +1,4 @@
-package com.reucon.openfire.plugin.archiver.model;
+package com.reucon.openfire.plugin.archive.model;
 
 import org.jivesoftware.database.JiveID;
 

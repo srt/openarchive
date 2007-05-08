@@ -1,18 +1,10 @@
-package com.reucon.openfire.plugin.archiver;
+package com.reucon.openfire.plugin.archive;
 
-import com.reucon.openfire.plugin.archiver.model.ArchivedMessage;
-import com.reucon.openfire.plugin.archiver.model.Conversation;
-import com.reucon.openfire.plugin.archiver.model.Participant;
+import com.reucon.openfire.plugin.archive.model.ArchivedMessage;
+import com.reucon.openfire.plugin.archive.model.Conversation;
+import com.reucon.openfire.plugin.archive.model.Participant;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.Collection;
-
-import org.jivesoftware.database.DbConnectionManager;
-import org.jivesoftware.database.SequenceManager;
-import org.jivesoftware.util.StringUtils;
-import org.jivesoftware.util.Log;
 
 /**
  * Manages database persistence.

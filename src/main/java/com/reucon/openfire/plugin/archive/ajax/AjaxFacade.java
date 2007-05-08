@@ -1,9 +1,9 @@
-package com.reucon.openfire.plugin.archiver.ajax;
+package com.reucon.openfire.plugin.archive.ajax;
 
-import com.reucon.openfire.plugin.archiver.ArchiverPlugin;
-import com.reucon.openfire.plugin.archiver.IndexManager;
-import com.reucon.openfire.plugin.archiver.PersistenceManager;
-import com.reucon.openfire.plugin.archiver.model.Conversation;
+import com.reucon.openfire.plugin.archive.ArchiverPlugin;
+import com.reucon.openfire.plugin.archive.IndexManager;
+import com.reucon.openfire.plugin.archive.PersistenceManager;
+import com.reucon.openfire.plugin.archive.model.Conversation;
 
 import java.util.*;
 import java.text.DateFormat;

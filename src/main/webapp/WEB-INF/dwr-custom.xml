@@ -5,8 +5,8 @@
 <dwr>
     <allow>
         <create creator="new" javascript="AjaxFacade" scope="application">
-            <param name="class" value="com.reucon.openfire.plugin.archiver.ajax.AjaxFacade"/>
+            <param name="class" value="com.reucon.openfire.plugin.archive.ajax.AjaxFacade"/>
         </create>
-        <convert converter="bean" match="com.reucon.openfire.plugin.archiver.ajax.FormattedConversation"/>
+        <convert converter="bean" match="com.reucon.openfire.plugin.archive.ajax.FormattedConversation"/>
     </allow>
 </dwr>

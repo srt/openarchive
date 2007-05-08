@@ -1,4 +1,4 @@
-package com.reucon.openfire.plugin.archiver.util;
+package com.reucon.openfire.plugin.archive.util;
 
 public class EscapeUtil
 {

@@ -1,4 +1,4 @@
-package com.reucon.openfire.plugin.archiver;
+package com.reucon.openfire.plugin.archive;
 
 import org.jivesoftware.openfire.container.Plugin;
 import org.jivesoftware.openfire.container.PluginManager;
@@ -20,10 +20,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-import com.reucon.openfire.plugin.archiver.model.ArchivedMessage;
-import com.reucon.openfire.plugin.archiver.impl.JdbcPersistenceManager;
-import com.reucon.openfire.plugin.archiver.impl.LuceneIndexManager;
-import com.reucon.openfire.plugin.archiver.impl.ArchiveManagerImpl;
+import com.reucon.openfire.plugin.archive.impl.JdbcPersistenceManager;
+import com.reucon.openfire.plugin.archive.impl.LuceneIndexManager;
+import com.reucon.openfire.plugin.archive.impl.ArchiveManagerImpl;
 
 /**
  * A sample plugin for Openfire.

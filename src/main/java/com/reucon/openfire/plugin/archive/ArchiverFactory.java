@@ -1,7 +1,6 @@
-package com.reucon.openfire.plugin.archiver;
+package com.reucon.openfire.plugin.archive;
 
-import com.reucon.openfire.plugin.archiver.model.ArchivedMessage;
-import com.reucon.openfire.plugin.archiver.model.Conversation;
+import com.reucon.openfire.plugin.archive.model.ArchivedMessage;
 import org.xmpp.packet.Message;
 import org.xmpp.packet.JID;
 import org.jivesoftware.openfire.session.Session;

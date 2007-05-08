@@ -1,10 +1,10 @@
-package com.reucon.openfire.plugin.archiver.impl;
+package com.reucon.openfire.plugin.archive.impl;
 
-import com.reucon.openfire.plugin.archiver.model.ArchivedMessage;
-import com.reucon.openfire.plugin.archiver.model.Conversation;
-import com.reucon.openfire.plugin.archiver.model.Participant;
-import com.reucon.openfire.plugin.archiver.PersistenceManager;
-import com.reucon.openfire.plugin.archiver.ArchivedMessageConsumer;
+import com.reucon.openfire.plugin.archive.model.ArchivedMessage;
+import com.reucon.openfire.plugin.archive.model.Conversation;
+import com.reucon.openfire.plugin.archive.model.Participant;
+import com.reucon.openfire.plugin.archive.PersistenceManager;
+import com.reucon.openfire.plugin.archive.ArchivedMessageConsumer;
 
 import java.sql.*;
 import java.util.Date;

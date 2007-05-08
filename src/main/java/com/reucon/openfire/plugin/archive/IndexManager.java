@@ -1,7 +1,6 @@
-package com.reucon.openfire.plugin.archiver;
+package com.reucon.openfire.plugin.archive;
 
-import com.reucon.openfire.plugin.archiver.model.ArchivedMessage;
-import com.reucon.openfire.plugin.archiver.model.Conversation;
+import com.reucon.openfire.plugin.archive.model.Conversation;
 
 import java.util.Collection;
 import java.util.Date;

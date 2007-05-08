@@ -1,4 +1,4 @@
-package com.reucon.openfire.plugin.archiver;
+package com.reucon.openfire.plugin.archive;
 
 import org.jivesoftware.openfire.session.Session;
 import org.xmpp.packet.Message;

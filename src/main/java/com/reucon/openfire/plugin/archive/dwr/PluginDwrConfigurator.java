@@ -1,4 +1,4 @@
-package com.reucon.openfire.plugin.archiver.dwr;
+package com.reucon.openfire.plugin.archive.dwr;
 
 import org.directwebremoting.Container;
 import org.directwebremoting.extend.Configurator;

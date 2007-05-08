@@ -1,12 +1,12 @@
-package com.reucon.openfire.plugin.archiver.impl;
+package com.reucon.openfire.plugin.archive.impl;
 
-import com.reucon.openfire.plugin.archiver.ArchiveManager;
-import com.reucon.openfire.plugin.archiver.PersistenceManager;
-import com.reucon.openfire.plugin.archiver.IndexManager;
-import com.reucon.openfire.plugin.archiver.ArchiverFactory;
-import com.reucon.openfire.plugin.archiver.model.ArchivedMessage;
-import com.reucon.openfire.plugin.archiver.model.Conversation;
-import com.reucon.openfire.plugin.archiver.model.Participant;
+import com.reucon.openfire.plugin.archive.ArchiveManager;
+import com.reucon.openfire.plugin.archive.PersistenceManager;
+import com.reucon.openfire.plugin.archive.IndexManager;
+import com.reucon.openfire.plugin.archive.ArchiverFactory;
+import com.reucon.openfire.plugin.archive.model.ArchivedMessage;
+import com.reucon.openfire.plugin.archive.model.Conversation;
+import com.reucon.openfire.plugin.archive.model.Participant;
 import org.jivesoftware.openfire.session.Session;
 import org.xmpp.packet.Message;
 
