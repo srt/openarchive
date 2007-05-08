@@ -3,13 +3,34 @@ package com.reucon.openfire.plugin.archive;
 import org.xmpp.packet.IQ;
 import org.xmpp.packet.PacketError;
 import org.xmpp.packet.Packet;
+import org.xmpp.packet.JID;
+import org.xmpp.component.Component;
+import org.xmpp.component.ComponentManager;
+import org.xmpp.component.ComponentException;
 import org.dom4j.Element;
+import org.jivesoftware.util.Log;
 
 /**
  *
  */
-public class PacketHandler
+public class ArchiveComponent implements Component
 {
+    private static final String COMPONENT_NAME = "archive";
+    private static final String COMPONENT_DESCRIPTION = "Open Archive";
+    private JID jid;
+    private ComponentManager componentManager;
+
+    /* Implementation of Component */
+    public String getName()
+    {
+        return COMPONENT_NAME;
+    }
+
+    public String getDescription()
+    {
+        return COMPONENT_DESCRIPTION;
+    }
+
     public void processPacket(Packet packet)
     {
         if (packet instanceof IQ)
@@ -17,6 +38,21 @@ public class PacketHandler
             processPacket((IQ) packet);
         }
     }
+
+    public void initialize(JID jid, ComponentManager componentManager) throws ComponentException
+    {
+        this.jid = jid;
+        this.componentManager = componentManager;
+    }
+
+    public void start()
+    {
+    }
+
+    public void shutdown()
+    {
+    }
+
 
     public void processPacket(IQ iq)
     {
@@ -72,7 +108,7 @@ public class PacketHandler
         }
 
         // if information was sent to the component itself
-        if (ArchivePlugin.getInstance().getComponentJID().equals(iq.getTo()))
+        if (jid.equals(iq.getTo()))
         {
 
             //try to see if there is a node on the query
@@ -139,8 +175,15 @@ public class PacketHandler
         }
     }
 
-    private void sendPacket(Packet packet)
+    public void sendPacket(Packet packet)
     {
-        ArchivePlugin.getInstance().sendPacket(packet);
+        try
+        {
+            componentManager.sendPacket(this, packet);
+        }
+        catch (Exception e)
+        {
+            Log.error(e);
+        }
     }
 }
