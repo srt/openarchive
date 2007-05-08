@@ -6,7 +6,7 @@
     <title>
         <fmt:message key="archive.search.title"/>
     </title>
-    <meta name="pageID" content="open-archive-search"/>
+    <meta name="pageID" content="openarchive-search"/>
     <script type="text/javascript" src="dwr/interface/AjaxFacade.js"></script>
     <script type="text/javascript" src="dwr/engine.js"></script>
     <script type="text/javascript" src="dwr/util.js"></script>

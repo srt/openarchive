@@ -15,6 +15,11 @@ import org.jivesoftware.util.PropertyEventDispatcher;
 import org.xmpp.packet.Message;
 import org.xmpp.packet.Packet;
 import org.xmpp.packet.Presence;
+import org.xmpp.packet.JID;
+import org.xmpp.component.Component;
+import org.xmpp.component.ComponentManager;
+import org.xmpp.component.ComponentException;
+import org.xmpp.component.ComponentManagerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,10 +32,12 @@ import com.reucon.openfire.plugin.archive.impl.ArchiveManagerImpl;
 /**
  * A sample plugin for Openfire.
  */
-public class ArchivePlugin implements Plugin, PacketInterceptor
+public class ArchivePlugin implements Plugin, Component, PacketInterceptor
 {
     private static final int DEFAULT_CONVERSATION_TIMEOUT = 30; // minutes
     private static final String DEFAULT_INDEX_DIR = "archive/index";
+    private static final String COMPONENT_NAME = "archive";
+    private static final String COMPONENT_DESCRIPTION = "Open Archive";
     private static ArchivePlugin instance;
 
     private String indexDir;
@@ -44,13 +51,16 @@ public class ArchivePlugin implements Plugin, PacketInterceptor
     private ArchiveManager archiveManager;
     private PersistenceManager persistenceManager;
     private IndexManager indexManager;
+    private JID componentJID;
+    private ComponentManager componentManager;
+    private PacketHandler packetHandler;
 
     public ArchivePlugin()
     {
         instance = this;
     }
 
-    /* lifecycle callbacks */
+    /* Implementation of Plugin */
     public void initializePlugin(PluginManager manager, File pluginDirectory)
     {
         /* Configuration */
@@ -78,6 +88,16 @@ public class ArchivePlugin implements Plugin, PacketInterceptor
         archiveManager = new ArchiveManagerImpl(persistenceManager, indexManager, conversationTimeout);
 
         InterceptorManager.getInstance().addInterceptor(this);
+        packetHandler = new PacketHandler();
+        componentManager = ComponentManagerFactory.getComponentManager();
+        try
+        {
+            componentManager.addComponent(getName(), this);
+        }
+        catch (ComponentException e)
+        {
+            Log.error("Unable to register component.", e);
+        }
 
         Log.info("Archiver Plugin initialized");
     }
@@ -86,6 +106,16 @@ public class ArchivePlugin implements Plugin, PacketInterceptor
     {
         enabled = false;
         InterceptorManager.getInstance().removeInterceptor(this);
+
+        try
+        {
+            componentManager.removeComponent(getName());
+        }
+        catch (ComponentException e)
+        {
+            Log.warn("Unable to remove component.", e);
+        }
+
         if (indexManager != null)
         {
             indexManager.destroy();
@@ -95,6 +125,55 @@ public class ArchivePlugin implements Plugin, PacketInterceptor
         propertyListener = null;
         instance = null;
         Log.info("Archiver Plugin destroyed");
+    }
+
+
+    /* Implementation of Component */
+    public String getName()
+    {
+        return COMPONENT_NAME;
+    }
+
+    public String getDescription()
+    {
+        return COMPONENT_DESCRIPTION;
+    }
+
+    public void processPacket(Packet packet)
+    {
+        packetHandler.processPacket(packet);
+    }
+
+    public void initialize(JID jid, ComponentManager componentManager) throws ComponentException
+    {
+        this.componentJID = jid;
+    }
+
+    public void start()
+    {
+    }
+
+    public void shutdown()
+    {
+    }
+
+    /* Implementation of PacketInterceptor */
+    public void interceptPacket(Packet packet, Session session, boolean incoming, boolean processed) throws PacketRejectedException
+    {
+        if (!isEnabled())
+        {
+            return;
+        }
+
+        if (!isValidTargetPacket(packet, incoming, processed))
+        {
+            return;
+        }
+
+        if (packet instanceof Message)
+        {
+            archiveManager.archiveMessage(session, (Message) packet);
+        }
     }
 
     public static ArchivePlugin getInstance()
@@ -115,6 +194,23 @@ public class ArchivePlugin implements Plugin, PacketInterceptor
     public PersistenceManager getPersistenceManager()
     {
         return persistenceManager;
+    }
+
+    public JID getComponentJID()
+    {
+        return componentJID;
+    }
+
+    public void sendPacket(Packet packet)
+    {
+        try
+        {
+            componentManager.sendPacket(this, packet);
+        }
+        catch (Exception e)
+        {
+            Log.error(e);
+        }
     }
 
     /* enabled property */
@@ -153,24 +249,6 @@ public class ArchivePlugin implements Plugin, PacketInterceptor
     private boolean isValidTargetPacket(Packet packet, boolean incoming, boolean processed)
     {
         return processed && incoming && (packet instanceof Message || packet instanceof Presence);
-    }
-
-    public void interceptPacket(Packet packet, Session session, boolean incoming, boolean processed) throws PacketRejectedException
-    {
-        if (!isEnabled())
-        {
-            return;
-        }
-
-        if (!isValidTargetPacket(packet, incoming, processed))
-        {
-            return;
-        }
-
-        if (packet instanceof Message)
-        {
-            archiveManager.archiveMessage(session, (Message) packet);
-        }
     }
 
     /**
