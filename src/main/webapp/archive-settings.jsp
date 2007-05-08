@@ -36,7 +36,7 @@
     <title>
         <fmt:message key="archive.settings.title"/>
     </title>
-    <meta name="pageID" content="archiver-settings"/>
+    <meta name="pageID" content="archive-settings"/>
     <script src="dwr/engine.js" type="text/javascript"></script>
     <script src="dwr/util.js" type="text/javascript"></script>
     <script src="dwr/interface/AjaxFacade.js" type="text/javascript"></script>

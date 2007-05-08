@@ -20,11 +20,11 @@
 
         <tab id="tab-server">
             <sidebar id="sidebar-server-settings">
-               <item id="archiver-settings" name="${archive.settings.title}"
-                   url="archiver-settings.jsp"
+               <item id="archive-settings" name="${archive.settings.title}"
+                   url="archive-settings.jsp"
                    description="${archive.settings.description}" />
-               <item id="archiver-search" name="${archive.settings.title}"
-                   url="archiver-search.jsp"
+               <item id="archive-search" name="${archive.settings.title}"
+                   url="archive-search.jsp"
                    description="${archive.search.description}" />
             </sidebar>
 

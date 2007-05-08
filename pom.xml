@@ -6,7 +6,7 @@
     <artifactId>archive</artifactId>
     <packaging>openfire-plugin</packaging>
     <version>1.0.0-SNAPSHOT</version>
-    <name>Open Archiver</name>
+    <name>Open Archive</name>
     <description>Server side message archive for Openfire.</description>
     <organization>
         <name>Stefan Reuter</name>
