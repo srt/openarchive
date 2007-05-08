@@ -2,7 +2,7 @@
 <plugin>
 
     <!-- Main plugin class -->
-    <class>com.reucon.openfire.plugin.archive.ArchiverPlugin</class>
+    <class>com.reucon.openfire.plugin.archive.ArchivePlugin</class>
     
     <!-- Plugin meta-data -->
     <name>${pom.name}</name>

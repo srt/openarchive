@@ -1,6 +1,6 @@
 package com.reucon.openfire.plugin.archive.ajax;
 
-import com.reucon.openfire.plugin.archive.ArchiverPlugin;
+import com.reucon.openfire.plugin.archive.ArchivePlugin;
 import com.reucon.openfire.plugin.archive.IndexManager;
 import com.reucon.openfire.plugin.archive.PersistenceManager;
 import com.reucon.openfire.plugin.archive.model.Conversation;
@@ -95,12 +95,12 @@ public class AjaxFacade
 
     private IndexManager getIndexManager()
     {
-        return ArchiverPlugin.getInstance().getIndexManager();
+        return ArchivePlugin.getInstance().getIndexManager();
     }
 
     private PersistenceManager getPersistenceManager()
     {
-        return ArchiverPlugin.getInstance().getPersistenceManager();
+        return ArchivePlugin.getInstance().getPersistenceManager();
     }
 
     private Date parseDate(String s)

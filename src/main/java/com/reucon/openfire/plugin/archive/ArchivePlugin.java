@@ -27,10 +27,10 @@ import com.reucon.openfire.plugin.archive.impl.ArchiveManagerImpl;
 /**
  * A sample plugin for Openfire.
  */
-public class ArchiverPlugin implements Plugin, PacketInterceptor
+public class ArchivePlugin implements Plugin, PacketInterceptor
 {
     private static final int DEFAULT_CONVERSATION_TIMEOUT = 30; // minutes
-    private static ArchiverPlugin instance;
+    private static ArchivePlugin instance;
 
     private String indexDir;
     private int conversationTimeout;
@@ -44,7 +44,7 @@ public class ArchiverPlugin implements Plugin, PacketInterceptor
     private PersistenceManager persistenceManager;
     private IndexManager indexManager;
 
-    public ArchiverPlugin()
+    public ArchivePlugin()
     {
         instance = this;
     }
@@ -56,9 +56,9 @@ public class ArchiverPlugin implements Plugin, PacketInterceptor
         propertyListener = new PropertyListener();
         PropertyEventDispatcher.addListener(propertyListener);
 
-        indexDir = JiveGlobals.getProperty(ArchiverProperties.INDEX_DIR, JiveGlobals.getHomeDirectory() + File.separator + "index");
-        conversationTimeout = JiveGlobals.getIntProperty(ArchiverProperties.CONVERSATION_TIMEOUT, DEFAULT_CONVERSATION_TIMEOUT);
-        enabled = JiveGlobals.getBooleanProperty(ArchiverProperties.ENABLED, false);
+        indexDir = JiveGlobals.getProperty(ArchiveProperties.INDEX_DIR, JiveGlobals.getHomeDirectory() + File.separator + "index");
+        conversationTimeout = JiveGlobals.getIntProperty(ArchiveProperties.CONVERSATION_TIMEOUT, DEFAULT_CONVERSATION_TIMEOUT);
+        enabled = JiveGlobals.getBooleanProperty(ArchiveProperties.ENABLED, false);
 
         server = XMPPServer.getInstance();
         mucServer = server.getMultiUserChatServer();
@@ -96,7 +96,7 @@ public class ArchiverPlugin implements Plugin, PacketInterceptor
         Log.info("Archiver Plugin destroyed");
     }
 
-    public static ArchiverPlugin getInstance()
+    public static ArchivePlugin getInstance()
     {
         return instance;
     }
@@ -124,7 +124,7 @@ public class ArchiverPlugin implements Plugin, PacketInterceptor
 
     public void setEnabled(boolean enabled)
     {
-        JiveGlobals.setProperty(ArchiverProperties.ENABLED, Boolean.toString(enabled));
+        JiveGlobals.setProperty(ArchiveProperties.ENABLED, Boolean.toString(enabled));
     }
 
     private void doSetEnabled(boolean enabled)
@@ -140,7 +140,7 @@ public class ArchiverPlugin implements Plugin, PacketInterceptor
 
     public void setConversationTimeout(int conversationTimeout)
     {
-        JiveGlobals.setProperty(ArchiverProperties.CONVERSATION_TIMEOUT, Integer.toString(conversationTimeout));
+        JiveGlobals.setProperty(ArchiveProperties.CONVERSATION_TIMEOUT, Integer.toString(conversationTimeout));
     }
 
     private void doSetConversationTimeout(int conversationTimeout)
@@ -187,11 +187,11 @@ public class ArchiverPlugin implements Plugin, PacketInterceptor
                 return;
             }
 
-            if (ArchiverProperties.ENABLED.equals(property))
+            if (ArchiveProperties.ENABLED.equals(property))
             {
                 doSetEnabled(Boolean.valueOf(value.toString()));
             }
-            else if (ArchiverProperties.CONVERSATION_TIMEOUT.equals(property))
+            else if (ArchiveProperties.CONVERSATION_TIMEOUT.equals(property))
             {
                 doSetConversationTimeout(Integer.valueOf(value.toString()));
             }
@@ -199,11 +199,11 @@ public class ArchiverPlugin implements Plugin, PacketInterceptor
 
         public void propertyDeleted(String property, Map params)
         {
-            if (ArchiverProperties.ENABLED.equals(property))
+            if (ArchiveProperties.ENABLED.equals(property))
             {
                 doSetEnabled(false);
             }
-            else if (ArchiverProperties.CONVERSATION_TIMEOUT.equals(property))
+            else if (ArchiveProperties.CONVERSATION_TIMEOUT.equals(property))
             {
                 doSetConversationTimeout(DEFAULT_CONVERSATION_TIMEOUT);
             }

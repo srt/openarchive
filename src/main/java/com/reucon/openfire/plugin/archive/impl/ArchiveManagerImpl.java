@@ -3,7 +3,7 @@ package com.reucon.openfire.plugin.archive.impl;
 import com.reucon.openfire.plugin.archive.ArchiveManager;
 import com.reucon.openfire.plugin.archive.PersistenceManager;
 import com.reucon.openfire.plugin.archive.IndexManager;
-import com.reucon.openfire.plugin.archive.ArchiverFactory;
+import com.reucon.openfire.plugin.archive.ArchiveFactory;
 import com.reucon.openfire.plugin.archive.model.ArchivedMessage;
 import com.reucon.openfire.plugin.archive.model.Conversation;
 import com.reucon.openfire.plugin.archive.model.Participant;
@@ -43,7 +43,7 @@ public class ArchiveManagerImpl implements ArchiveManager
             return;
         }
 
-        archivedMessage = ArchiverFactory.createArchivedMessage(session, message);
+        archivedMessage = ArchiveFactory.createArchivedMessage(session, message);
         if (archivedMessage.isEmpty())
         {
             return;

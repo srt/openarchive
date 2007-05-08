@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jstl/fmt_rt" prefix="fmt" %>
 <%@ page import="org.jivesoftware.util.ParamUtils" %>
-<%@ page import="com.reucon.openfire.plugin.archive.ArchiverPlugin" %>
+<%@ page import="com.reucon.openfire.plugin.archive.ArchivePlugin" %>
 
 <% // Get parameters
     boolean update = request.getParameter("update") != null;
@@ -9,7 +9,7 @@
     boolean componentEnabled = ParamUtils.getBooleanParameter(request, "componentEnabled");
     Integer conversationTimeout = ParamUtils.getIntParameter(request, "conversationTimeout", -1);
 
-    ArchiverPlugin plugin = ArchiverPlugin.getInstance();
+    ArchivePlugin plugin = ArchivePlugin.getInstance();
 
     // Perform update if requested
     if (update)

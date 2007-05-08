@@ -12,9 +12,9 @@ import java.util.Date;
 /**
  * Factory to create model objects.
  */
-public class ArchiverFactory
+public class ArchiveFactory
 {
-    private ArchiverFactory()
+    private ArchiveFactory()
     {
 
     }

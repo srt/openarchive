@@ -4,7 +4,7 @@
 
     <servlet>
         <servlet-name>dwr-invoker</servlet-name>
-        <servlet-class>com.reucon.openfire.plugin.archive.ArchivePlugin</servlet-class>
+        <servlet-class>com.reucon.openfire.plugin.archive.dwr.PluginDwrServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
