@@ -46,15 +46,15 @@ public class LuceneIndexManager implements IndexManager, Runnable
     private static final String FIELD_BODY = "body";
     private static final String FIELD_NICK = "nick";
     private static final String FIELD_JID = "jid";
-    private File indexDir;
-    private PersistenceManager persistenceManager;
+    private static final long INDEX_INTERVAL = 10000l; // 10 seconds
+    private final File indexDir;
+    private final PersistenceManager persistenceManager;
     private final Analyzer analyzer;
-    private IndexSearcher indexSearcher;
     private final BlockingQueue<Object> queue;
     private final Thread indexThread;
+    private IndexSearcher indexSearcher;
     private boolean paused;
     private boolean die;
-    private static final long INDEX_INTERVAL = 10000l;
 
     public LuceneIndexManager(PersistenceManager persistenceManager, String indexDir) throws IOException
     {
@@ -90,6 +90,10 @@ public class LuceneIndexManager implements IndexManager, Runnable
 
     private IndexSearcher createIndexSearcher() throws IOException
     {
+        if (!indexDir.exists())
+        {
+            createIndexWriter().close();
+        }
         return new IndexSearcher(FSDirectory.getDirectory(indexDir, false));
     }
 
@@ -382,8 +386,8 @@ public class LuceneIndexManager implements IndexManager, Runnable
                 Term lowerTerm;
                 Term upperTerm;
 
-                lowerTerm = new Term(FIELD_TIME, getDateString(startDate == null ? new Date(0) : startDate));
-                upperTerm = new Term(FIELD_TIME, getDateString(endDate == null ? new Date() : endDate));
+                lowerTerm = new Term(FIELD_TIME, dateToString(startDate == null ? new Date(0) : startDate));
+                upperTerm = new Term(FIELD_TIME, dateToString(endDate == null ? new Date() : endDate));
                 rangeQuery = new RangeQuery(lowerTerm, upperTerm, true);
                 query.add(rangeQuery, BooleanClause.Occur.MUST);
             }
@@ -465,7 +469,7 @@ public class LuceneIndexManager implements IndexManager, Runnable
         {
             doc.add(new Field(FIELD_CONVERSATION_ID, message.getConversation().getId().toString(), Field.Store.YES, Field.Index.NO));
         }
-        doc.add(new Field(FIELD_TIME, getDateString(message.getTime()), Field.Store.YES, Field.Index.UN_TOKENIZED));
+        doc.add(new Field(FIELD_TIME, dateToString(message.getTime()), Field.Store.YES, Field.Index.UN_TOKENIZED));
         doc.add(new Field(FIELD_PARTICIPANT, message.getFrom(), Field.Store.YES, Field.Index.UN_TOKENIZED));
         doc.add(new Field(FIELD_PARTICIPANT, message.getTo(), Field.Store.YES, Field.Index.UN_TOKENIZED));
         doc.add(new Field(FIELD_TYPE, message.getType(), Field.Store.YES, Field.Index.UN_TOKENIZED));
@@ -479,11 +483,6 @@ public class LuceneIndexManager implements IndexManager, Runnable
         }
 
         return doc;
-    }
-
-    private String getDateString(Date date)
-    {
-        return DateTools.dateToString(date, DateTools.Resolution.DAY);
     }
 
     private Document createDocument(RosterItem rosterItem)
@@ -503,5 +502,10 @@ public class LuceneIndexManager implements IndexManager, Runnable
 
         System.out.println("Added roster item nick=" + rosterItem.getNickname() + ", jid=" + rosterItem.getJid());
         return doc;
+    }
+    
+    private String dateToString(Date date)
+    {
+        return DateTools.dateToString(date, DateTools.Resolution.DAY);
     }
 }
