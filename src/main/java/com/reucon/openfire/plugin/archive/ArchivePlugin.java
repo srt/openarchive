@@ -30,6 +30,7 @@ import com.reucon.openfire.plugin.archive.impl.ArchiveManagerImpl;
 public class ArchivePlugin implements Plugin, PacketInterceptor
 {
     private static final int DEFAULT_CONVERSATION_TIMEOUT = 30; // minutes
+    private static final String DEFAULT_INDEX_DIR = "archive/index";
     private static ArchivePlugin instance;
 
     private String indexDir;
@@ -56,7 +57,7 @@ public class ArchivePlugin implements Plugin, PacketInterceptor
         propertyListener = new PropertyListener();
         PropertyEventDispatcher.addListener(propertyListener);
 
-        indexDir = JiveGlobals.getProperty(ArchiveProperties.INDEX_DIR, JiveGlobals.getHomeDirectory() + File.separator + "index");
+        indexDir = JiveGlobals.getProperty(ArchiveProperties.INDEX_DIR, JiveGlobals.getHomeDirectory() + File.separator + DEFAULT_INDEX_DIR);
         conversationTimeout = JiveGlobals.getIntProperty(ArchiveProperties.CONVERSATION_TIMEOUT, DEFAULT_CONVERSATION_TIMEOUT);
         enabled = JiveGlobals.getBooleanProperty(ArchiveProperties.ENABLED, false);
 
