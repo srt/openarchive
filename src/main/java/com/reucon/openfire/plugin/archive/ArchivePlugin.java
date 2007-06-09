@@ -94,7 +94,7 @@ public class ArchivePlugin implements Plugin, PacketInterceptor
             Log.error("Unable to register component.", e);
         }
 
-        Log.info("Archiver Plugin initialized");
+        Log.info("Archive Plugin initialized");
     }
 
     public void destroyPlugin()
@@ -119,7 +119,7 @@ public class ArchivePlugin implements Plugin, PacketInterceptor
         PropertyEventDispatcher.removeListener(propertyListener);
         propertyListener = null;
         instance = null;
-        Log.info("Archiver Plugin destroyed");
+        Log.info("Archive Plugin destroyed");
     }
 
     /* Implementation of PacketInterceptor */

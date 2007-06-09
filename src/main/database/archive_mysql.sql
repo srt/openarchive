@@ -1,8 +1,4 @@
-DROP TABLE IF EXISTS archiverMessages;
-DROP TABLE IF EXISTS archiverConversations;
-DROP TABLE IF EXISTS archiverParticipants;
-
-CREATE TABLE archiverConversations (
+CREATE TABLE archiveConversations (
   conversationId        BIGINT          NOT NULL,
   start                 BIGINT          NOT NULL,
   end                   BIGINT          NOT NULL,
@@ -10,7 +6,7 @@ CREATE TABLE archiverConversations (
   PRIMARY KEY (conversationId)
 );
 
-CREATE TABLE archiverParticipants (
+CREATE TABLE archiveParticipants (
   participantId         BIGINT          NOT NULL,
   start                 BIGINT          NOT NULL,
   end                   BIGINT,
@@ -18,10 +14,10 @@ CREATE TABLE archiverParticipants (
   nick                  VARCHAR(255),
   conversationId        BIGINT          NOT NULL,
   PRIMARY KEY (participantId),
-  INDEX idx_archiverParticipants_conversationId (conversationId)
+  INDEX idx_archiveParticipants_conversationId (conversationId)
 );
 
-CREATE TABLE archiverMessages (
+CREATE TABLE archiveMessages (
   messageId             BIGINT          NOT NULL,
   time                  BIGINT          NOT NULL,
   originalId            VARCHAR(255),
@@ -36,7 +32,7 @@ CREATE TABLE archiverMessages (
   body                  TEXT,
   conversationId        BIGINT          NOT NULL,
   PRIMARY KEY (messageId),
-  INDEX idx_archiverMessages_conversationId (conversationId)
+  INDEX idx_archiveMessages_conversationId (conversationId)
 );
 
-INSERT INTO jiveVersion (name, version) VALUES ('archiver', 1);
+INSERT INTO jiveVersion (name, version) VALUES ('archive', 1);

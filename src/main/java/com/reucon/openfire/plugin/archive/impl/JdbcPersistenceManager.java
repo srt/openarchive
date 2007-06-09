@@ -21,43 +21,43 @@ import org.jivesoftware.util.Log;
 public class JdbcPersistenceManager implements PersistenceManager
 {
     public static final String CREATE_MESSAGE =
-            "INSERT INTO archiverMessages (messageID,time,originalId,fromJid,fromResource," +
+            "INSERT INTO archiveMessages (messageID,time,originalId,fromJid,fromResource," +
                     " toJid,toResource,peerIpAddress,type,thread,subject,body,conversationID) " +
                     "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
     public static final String SELECT_ALL_MESSAGES =
             "SELECT messageID,time,originalId,fromJid,fromResource," +
                     " toJid,toResource,peerIpAddress,type,thread,subject,body,conversationID " +
-                    "FROM archiverMessages";
+                    "FROM archiveMessages";
 
     public static final String SELECT_MESSAGES_BY_CONVERSATION =
             "SELECT messageID,time,originalId,fromJid,fromResource," +
                     " toJid,toResource,peerIpAddress,type,thread,subject,body,conversationID " +
-                    "FROM archiverMessages WHERE conversationId = ? ORDER BY time";
+                    "FROM archiveMessages WHERE conversationId = ? ORDER BY time";
     
     public static final String CREATE_CONVERSATION =
-            "INSERT INTO archiverConversations (conversationID,start,end,roomJid) " +
+            "INSERT INTO archiveConversations (conversationID,start,end,roomJid) " +
                     "VALUES (?,?,?,?)";
 
     public static final String UPDATE_CONVERSATION_END =
-            "UPDATE archiverConversations SET end = ? WHERE conversationID = ?";
+            "UPDATE archiveConversations SET end = ? WHERE conversationID = ?";
 
     public static final String ADD_PARTICIPANT =
-            "INSERT INTO archiverParticipants (participantID,start,end,jid,conversationID) " +
+            "INSERT INTO archiveParticipants (participantID,start,end,jid,conversationID) " +
                     "VALUES (?,?,?,?,?)";
 
     public static final String SELECT_CONVERSATION =
-            "SELECT conversationID,start,end,roomJid FROM archiverConversations WHERE conversationId = ?";
+            "SELECT conversationID,start,end,roomJid FROM archiveConversations WHERE conversationId = ?";
 
     public static final String SELECT_CONVERSATIONS =
-            "SELECT conversationID,start,end,roomJid FROM archiverConversations WHERE ";
+            "SELECT conversationID,start,end,roomJid FROM archiveConversations WHERE ";
     public static final String CONVERSATION_ID = "conversationID";
 
     public static final String SELECT_ACTIVE_CONVERSATIONS =
-            "SELECT conversationID,start,end,roomJid FROM archiverConversations WHERE end > ?";
+            "SELECT conversationID,start,end,roomJid FROM archiveConversations WHERE end > ?";
 
     public static final String SELECT_PARTICIPANTS_BY_CONVERSATION =
-            "SELECT participantID,start,end,jid FROM archiverParticipants WHERE conversationID =? ORDER BY start";
+            "SELECT participantID,start,end,jid FROM archiveParticipants WHERE conversationID =? ORDER BY start";
 
     public boolean saveMessage(ArchivedMessage message)
     {

@@ -10,8 +10,8 @@
     <author>${pom.organization.name}</author>
     <version>${pom.version}</version>
     <date>${openfire-plugin.build.date}</date>
-    <minServerVersion>3.3.0</minServerVersion>
-    <databaseKey>archiver</databaseKey>
+    <minServerVersion>3.3.1</minServerVersion>
+    <databaseKey>archive</databaseKey>
     <databaseVersion>1</databaseVersion>
     <licenseType>gpl</licenseType>
     

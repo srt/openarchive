@@ -31,14 +31,6 @@ public class ArchiveComponent implements Component
         return COMPONENT_DESCRIPTION;
     }
 
-    public void processPacket(Packet packet)
-    {
-        if (packet instanceof IQ)
-        {
-            processPacket((IQ) packet);
-        }
-    }
-
     public void initialize(JID jid, ComponentManager componentManager) throws ComponentException
     {
         this.jid = jid;
@@ -53,6 +45,13 @@ public class ArchiveComponent implements Component
     {
     }
 
+    public void processPacket(Packet packet)
+    {
+        if (packet instanceof IQ)
+        {
+            processPacket((IQ) packet);
+        }
+    }
 
     public void processPacket(IQ iq)
     {
@@ -131,8 +130,8 @@ public class ArchiveComponent implements Component
             // Create and add the identity
             Element identity = queryElement.addElement("identity");
             identity.addAttribute("category", "directory");
-            identity.addAttribute("type", "archive");
-            identity.addAttribute("name", "Open Archive");
+            identity.addAttribute("type", COMPONENT_NAME);
+            identity.addAttribute("name", COMPONENT_DESCRIPTION);
 
             // Create and add a the feature provided by the workgroup
             // Create and add a the disco#info feature
