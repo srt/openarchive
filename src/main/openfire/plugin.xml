@@ -12,7 +12,7 @@
     <date>${openfire-plugin.build.date}</date>
     <minServerVersion>3.3.1</minServerVersion>
     <databaseKey>archive</databaseKey>
-    <databaseVersion>1</databaseVersion>
+    <databaseVersion>2</databaseVersion>
     <licenseType>gpl</licenseType>
     
     <!-- Admin console meta-data -->

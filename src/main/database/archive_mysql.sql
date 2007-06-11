@@ -1,15 +1,15 @@
 CREATE TABLE archiveConversations (
   conversationId        BIGINT          NOT NULL,
-  start                 BIGINT          NOT NULL,
-  end                   BIGINT          NOT NULL,
+  startTime             BIGINT          NOT NULL,
+  endTime               BIGINT          NOT NULL,
   roomJid               VARCHAR(255),
   PRIMARY KEY (conversationId)
 );
 
 CREATE TABLE archiveParticipants (
   participantId         BIGINT          NOT NULL,
-  start                 BIGINT          NOT NULL,
-  end                   BIGINT,
+  startTime             BIGINT          NOT NULL,
+  endTime               BIGINT,
   jid                   VARCHAR(255)    NOT NULL,
   nick                  VARCHAR(255),
   conversationId        BIGINT          NOT NULL,
@@ -35,4 +35,4 @@ CREATE TABLE archiveMessages (
   INDEX idx_archiveMessages_conversationId (conversationId)
 );
 
-INSERT INTO jiveVersion (name, version) VALUES ('archive', 1);
+INSERT INTO jiveVersion (name, version) VALUES ('archive', 2);

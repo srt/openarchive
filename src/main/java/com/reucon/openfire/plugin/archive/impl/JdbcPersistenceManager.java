@@ -36,28 +36,28 @@ public class JdbcPersistenceManager implements PersistenceManager
                     "FROM archiveMessages WHERE conversationId = ? ORDER BY time";
     
     public static final String CREATE_CONVERSATION =
-            "INSERT INTO archiveConversations (conversationID,start,end,roomJid) " +
+            "INSERT INTO archiveConversations (conversationID,startTime,endTime,roomJid) " +
                     "VALUES (?,?,?,?)";
 
     public static final String UPDATE_CONVERSATION_END =
-            "UPDATE archiveConversations SET end = ? WHERE conversationID = ?";
+            "UPDATE archiveConversations SET endTime = ? WHERE conversationID = ?";
 
     public static final String ADD_PARTICIPANT =
-            "INSERT INTO archiveParticipants (participantID,start,end,jid,conversationID) " +
+            "INSERT INTO archiveParticipants (participantID,startTime,endTime,jid,conversationID) " +
                     "VALUES (?,?,?,?,?)";
 
     public static final String SELECT_CONVERSATION =
-            "SELECT conversationID,start,end,roomJid FROM archiveConversations WHERE conversationId = ?";
+            "SELECT conversationID,startTime,endTime,roomJid FROM archiveConversations WHERE conversationId = ?";
 
     public static final String SELECT_CONVERSATIONS =
-            "SELECT conversationID,start,end,roomJid FROM archiveConversations WHERE ";
+            "SELECT conversationID,startTime,endTime,roomJid FROM archiveConversations WHERE ";
     public static final String CONVERSATION_ID = "conversationID";
 
     public static final String SELECT_ACTIVE_CONVERSATIONS =
-            "SELECT conversationID,start,end,roomJid FROM archiveConversations WHERE end > ?";
+            "SELECT conversationID,startTime,endTime,roomJid FROM archiveConversations WHERE endTime > ?";
 
     public static final String SELECT_PARTICIPANTS_BY_CONVERSATION =
-            "SELECT participantID,start,end,jid FROM archiveParticipants WHERE conversationID =? ORDER BY start";
+            "SELECT participantID,startTime,endTime,jid FROM archiveParticipants WHERE conversationID =? ORDER BY startTime";
 
     public boolean saveMessage(ArchivedMessage message)
     {
