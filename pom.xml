@@ -81,9 +81,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jivesoftware.openfire</groupId>
+            <groupId>org.igniterealtime.openfire</groupId>
             <artifactId>openfire</artifactId>
-            <version>3.3.0</version>
+            <version>3.3.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
