@@ -462,6 +462,11 @@ public class LuceneIndexManager implements IndexManager, Runnable
     {
         Document doc;
 
+        if (message.getId() == null)
+        {
+            throw new IllegalArgumentException("Unable to create lucene document from unsaved message (id is null)");
+        }
+
         doc = new Document();
         doc.add(new Field(FIELD_DOCTYPE, DOCTYPE_MESSAGE, Field.Store.YES, Field.Index.UN_TOKENIZED));
         doc.add(new Field(FIELD_MESSAGE_ID, message.getId().toString(), Field.Store.YES, Field.Index.NO));
