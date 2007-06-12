@@ -1,31 +1,29 @@
 package com.reucon.openfire.plugin.archive;
 
+import com.reucon.openfire.plugin.archive.impl.ArchiveManagerImpl;
+import com.reucon.openfire.plugin.archive.impl.JdbcPersistenceManager;
+import com.reucon.openfire.plugin.archive.impl.LuceneIndexManager;
+import com.reucon.openfire.plugin.archive.xep0136.Xep0136Support;
+import com.reucon.openfire.plugin.archive.xep0136.IQPrefHandler;
+import org.jivesoftware.openfire.XMPPServer;
 import org.jivesoftware.openfire.container.Plugin;
 import org.jivesoftware.openfire.container.PluginManager;
-import org.jivesoftware.openfire.XMPPServer;
-import org.jivesoftware.openfire.muc.MultiUserChatServer;
+import org.jivesoftware.openfire.interceptor.InterceptorManager;
 import org.jivesoftware.openfire.interceptor.PacketInterceptor;
 import org.jivesoftware.openfire.interceptor.PacketRejectedException;
-import org.jivesoftware.openfire.interceptor.InterceptorManager;
+import org.jivesoftware.openfire.muc.MultiUserChatServer;
 import org.jivesoftware.openfire.session.Session;
-import org.jivesoftware.util.Log;
 import org.jivesoftware.util.JiveGlobals;
-import org.jivesoftware.util.PropertyEventListener;
+import org.jivesoftware.util.Log;
 import org.jivesoftware.util.PropertyEventDispatcher;
+import org.jivesoftware.util.PropertyEventListener;
 import org.xmpp.packet.Message;
 import org.xmpp.packet.Packet;
 import org.xmpp.packet.Presence;
-import org.xmpp.component.ComponentManager;
-import org.xmpp.component.ComponentException;
-import org.xmpp.component.ComponentManagerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
-
-import com.reucon.openfire.plugin.archive.impl.JdbcPersistenceManager;
-import com.reucon.openfire.plugin.archive.impl.LuceneIndexManager;
-import com.reucon.openfire.plugin.archive.impl.ArchiveManagerImpl;
 
 /**
  * A sample plugin for Openfire.
@@ -47,8 +45,7 @@ public class ArchivePlugin implements Plugin, PacketInterceptor
     private ArchiveManager archiveManager;
     private PersistenceManager persistenceManager;
     private IndexManager indexManager;
-    private ComponentManager componentManager;
-    private ArchiveComponent archiveComponent;
+    private Xep0136Support xep0136Support;
 
     public ArchivePlugin()
     {
@@ -83,16 +80,9 @@ public class ArchivePlugin implements Plugin, PacketInterceptor
         archiveManager = new ArchiveManagerImpl(persistenceManager, indexManager, conversationTimeout);
 
         InterceptorManager.getInstance().addInterceptor(this);
-        archiveComponent = new ArchiveComponent();
-        componentManager = ComponentManagerFactory.getComponentManager();
-        try
-        {
-            componentManager.addComponent(archiveComponent.getName(), archiveComponent);
-        }
-        catch (ComponentException e)
-        {
-            Log.error("Unable to register component.", e);
-        }
+
+        xep0136Support = new Xep0136Support(server);
+        xep0136Support.start();
 
         Log.info("Archive Plugin initialized");
     }
@@ -100,16 +90,9 @@ public class ArchivePlugin implements Plugin, PacketInterceptor
     public void destroyPlugin()
     {
         enabled = false;
-        InterceptorManager.getInstance().removeInterceptor(this);
 
-        try
-        {
-            componentManager.removeComponent(archiveComponent.getName());
-        }
-        catch (ComponentException e)
-        {
-            Log.warn("Unable to remove component.", e);
-        }
+        xep0136Support.stop();
+        InterceptorManager.getInstance().removeInterceptor(this);
 
         if (indexManager != null)
         {
