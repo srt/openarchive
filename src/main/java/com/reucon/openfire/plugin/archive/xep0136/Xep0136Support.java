@@ -1,17 +1,13 @@
 package com.reucon.openfire.plugin.archive.xep0136;
 
-import org.jivesoftware.openfire.container.Module;
 import org.jivesoftware.openfire.XMPPServer;
 import org.jivesoftware.openfire.disco.ServerFeaturesProvider;
 import org.jivesoftware.openfire.handler.IQHandler;
 import org.jivesoftware.util.Log;
-import org.jivesoftware.util.LocaleUtils;
 
-import java.util.Map;
-import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
-import java.lang.reflect.Field;
 
 /**
  * Encapsulates support for XEP-0136.
@@ -26,6 +22,7 @@ public class Xep0136Support
         this.server = server;
         this.iqHandlers = new ArrayList<IQHandler>();
         iqHandlers.add(new IQPrefHandler());
+        iqHandlers.add(new IQListHandler());
     }
 
     public void start()
