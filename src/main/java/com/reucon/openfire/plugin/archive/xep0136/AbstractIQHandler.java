@@ -2,6 +2,7 @@ package com.reucon.openfire.plugin.archive.xep0136;
 
 import com.reucon.openfire.plugin.archive.ArchivePlugin;
 import com.reucon.openfire.plugin.archive.PersistenceManager;
+import com.reucon.openfire.plugin.archive.IndexManager;
 import org.jivesoftware.openfire.IQHandlerInfo;
 import org.jivesoftware.openfire.handler.IQHandler;
 
@@ -27,5 +28,10 @@ public abstract class AbstractIQHandler extends IQHandler
     protected PersistenceManager getPersistenceManager()
     {
         return ArchivePlugin.getInstance().getPersistenceManager();
+    }
+
+    protected IndexManager getIndexManager()
+    {
+        return ArchivePlugin.getInstance().getIndexManager();
     }
 }
