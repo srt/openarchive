@@ -50,8 +50,8 @@ public class JdbcPersistenceManager implements PersistenceManager
             "SELECT conversationID,startTime,endTime,roomJid FROM archiveConversations WHERE conversationId = ?";
 
     public static final String SELECT_CONVERSATIONS =
-            "SELECT conversationID,startTime,endTime,roomJid FROM archiveConversations WHERE ";
-    public static final String CONVERSATION_ID = "conversationID";
+            "SELECT c.conversationID,c.startTime,c.endTime,c.roomJid FROM archiveConversations AS c";
+    public static final String CONVERSATION_ID = "c.conversationID";
 
     public static final String SELECT_ACTIVE_CONVERSATIONS =
             "SELECT conversationID,startTime,endTime,roomJid FROM archiveConversations WHERE endTime > ?";
@@ -254,6 +254,120 @@ public class JdbcPersistenceManager implements PersistenceManager
         }
     }
 
+    public Collection<Conversation> findConversations(String[] participants, Date startDate, Date endDate)
+    {
+        final Collection<Conversation> conversations;
+        final StringBuilder querySB;
+        final StringBuilder whereSB;
+        int parameterIndex;
+
+        conversations = new ArrayList<Conversation>();
+
+        querySB = new StringBuilder(SELECT_CONVERSATIONS);
+        whereSB = new StringBuilder();
+
+        for (int i = 0; i < participants.length; i++)
+        {
+            if (participants[i].length() == 0)
+            {
+                continue;
+            }
+            querySB.append(", archiveParticipants AS p").append(i);
+            if (whereSB.length() != 0)
+            {
+                whereSB.append(" AND ");
+            }
+            whereSB.append("p").append(i).append(".conversationId = c.conversationId");
+            whereSB.append(" AND p").append(i).append(".jid = ?");
+        }
+        if (startDate != null)
+        {
+            if (whereSB.length() != 0)
+            {
+                whereSB.append(" AND ");
+            }
+            whereSB.append("c.startTime >= ?");
+        }
+        if (endDate != null)
+        {
+            if (whereSB.length() != 0)
+            {
+                whereSB.append(" AND ");
+            }
+            whereSB.append("c.endTime <= ?");
+        }
+        querySB.append(" WHERE ").append(whereSB);
+        System.out.println(querySB.toString());
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try
+        {
+            con = DbConnectionManager.getConnection();
+            pstmt = con.prepareStatement(querySB.toString());
+
+            parameterIndex = 1;
+            for (String participant : participants)
+            {
+                if (participant.length() == 0)
+                {
+                    continue;
+                }
+
+                System.out.println(parameterIndex + ": " + participant);
+                pstmt.setString(parameterIndex++, participant);
+            }
+            if (startDate != null)
+            {
+                System.out.println(parameterIndex + ": " + startDate);
+                pstmt.setLong(parameterIndex++, dateToMillis(startDate));
+            }
+            if (endDate != null)
+            {
+                System.out.println(parameterIndex + ": " + endDate);
+                pstmt.setLong(parameterIndex++, dateToMillis(endDate));
+            }
+
+            rs = pstmt.executeQuery();
+            while (rs.next())
+            {
+                Conversation conversation;
+
+                conversation = new Conversation(millisToDate(rs.getLong(2)), rs.getString(4));
+                conversation.setId(rs.getLong(1));
+                conversation.setEnd(millisToDate(rs.getLong(3)));
+                conversations.add(conversation);
+            }
+
+            rs.close();
+            pstmt.close();
+
+            pstmt = con.prepareStatement(SELECT_PARTICIPANTS_BY_CONVERSATION);
+            for (Conversation conversation : conversations)
+            {
+                pstmt.setLong(1, conversation.getId());
+                rs = pstmt.executeQuery();
+                while (rs.next())
+                {
+                    Participant participant;
+                    participant = extractParticipant(rs);
+                    conversation.addParticipant(participant);
+                }
+            }
+        }
+        catch (SQLException sqle)
+        {
+            Log.error("Error selecting conversations", sqle);
+        }
+        finally
+        {
+            DbConnectionManager.closeConnection(rs, pstmt, con);
+        }
+
+        return conversations;
+    }
+
     public Collection<Conversation> getActiveConversations(int conversationTimeout)
     {
         final Collection<Conversation> conversations;
@@ -321,6 +435,7 @@ public class JdbcPersistenceManager implements PersistenceManager
         }
 
         querySB = new StringBuilder(SELECT_CONVERSATIONS);
+        querySB.append(" WHERE ");
         querySB.append(CONVERSATION_ID);
         querySB.append(" IN ( ");
         for (int i = 0; i < conversationIds.size(); i++)

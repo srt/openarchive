@@ -74,7 +74,15 @@ public class AjaxFacade
             endDate = parseDate(endDateString);
         }
 
-        conversations = getIndexManager().findConversations(participants, startDate, endDate, keywords);
+        if (keywords == null || keywords.length() == 0)
+        {
+            conversations = getPersistenceManager().findConversations(participants, startDate, endDate);
+        }
+        else
+        {
+            conversations = getIndexManager().findConversations(participants, startDate, endDate, keywords);
+        }
+
         formattedConversations = new TreeSet<FormattedConversation>();
 
         for (Conversation conversation : conversations)
