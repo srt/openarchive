@@ -86,7 +86,7 @@ public class Xep0059ResultSet
         this.count = count;
     }
 
-    public Element buildResponseElement()
+    public Element createResultElement()
     {
         final Element set;
 
