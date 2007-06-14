@@ -11,8 +11,8 @@ public class Xep0059ResultSet
 {
     private String before;
     private String after;
-    private int max = -1;
     private int index = -1;
+    private int max = -1;
     private String first;
     private int firstIndex = -1;
     private String last;
@@ -56,14 +56,14 @@ public class Xep0059ResultSet
         return after;
     }
 
-    public int getMax()
-    {
-        return max;
-    }
-
     public int getIndex()
     {
         return index;
+    }
+
+    public int getMax()
+    {
+        return max;
     }
 
     public void setFirst(String first)
