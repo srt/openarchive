@@ -299,7 +299,6 @@ public class JdbcPersistenceManager implements PersistenceManager
         }
         querySB.append(" WHERE ").append(whereSB);
         querySB.append(" ORDER BY c.startTime");
-        System.out.println(querySB.toString());
 
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -317,17 +316,14 @@ public class JdbcPersistenceManager implements PersistenceManager
                     continue;
                 }
 
-                System.out.println(parameterIndex + ": " + participant);
                 pstmt.setString(parameterIndex++, participant);
             }
             if (startDate != null)
             {
-                System.out.println(parameterIndex + ": " + startDate + " " + dateToMillis(startDate));
                 pstmt.setLong(parameterIndex++, dateToMillis(startDate));
             }
             if (endDate != null)
             {
-                System.out.println(parameterIndex + ": " + endDate + " " + dateToMillis(endDate));
                 pstmt.setLong(parameterIndex++, dateToMillis(endDate));
             }
 
