@@ -4,7 +4,7 @@
     "http://getahead.org/dwr/dwr20.dtd">
 <dwr>
     <allow>
-        <create creator="new" javascript="AjaxFacade" scope="application">
+        <create creator="new" javascript="AjaxFacade">
             <param name="class" value="com.reucon.openfire.plugin.archive.ajax.AjaxFacade"/>
         </create>
         <convert converter="bean" match="com.reucon.openfire.plugin.archive.ajax.FormattedConversation"/>

@@ -10,6 +10,7 @@ import java.sql.*;
 import java.util.Date;
 import java.util.Collection;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.jivesoftware.database.DbConnectionManager;
 import org.jivesoftware.database.SequenceManager;
@@ -254,9 +255,9 @@ public class JdbcPersistenceManager implements PersistenceManager
         }
     }
 
-    public Collection<Conversation> findConversations(String[] participants, Date startDate, Date endDate)
+    public List<Conversation> findConversations(String[] participants, Date startDate, Date endDate)
     {
-        final Collection<Conversation> conversations;
+        final List<Conversation> conversations;
         final StringBuilder querySB;
         final StringBuilder whereSB;
         int parameterIndex;
@@ -297,6 +298,7 @@ public class JdbcPersistenceManager implements PersistenceManager
             whereSB.append("c.endTime <= ?");
         }
         querySB.append(" WHERE ").append(whereSB);
+        querySB.append(" ORDER BY c.startTime");
         System.out.println(querySB.toString());
 
         Connection con = null;
@@ -320,12 +322,12 @@ public class JdbcPersistenceManager implements PersistenceManager
             }
             if (startDate != null)
             {
-                System.out.println(parameterIndex + ": " + startDate);
+                System.out.println(parameterIndex + ": " + startDate + " " + dateToMillis(startDate));
                 pstmt.setLong(parameterIndex++, dateToMillis(startDate));
             }
             if (endDate != null)
             {
-                System.out.println(parameterIndex + ": " + endDate);
+                System.out.println(parameterIndex + ": " + endDate + " " + dateToMillis(endDate));
                 pstmt.setLong(parameterIndex++, dateToMillis(endDate));
             }
 
@@ -425,7 +427,7 @@ public class JdbcPersistenceManager implements PersistenceManager
 
     public Collection<Conversation> getConversations(Collection<Long> conversationIds)
     {
-        final Collection<Conversation> conversations;
+        final List<Conversation> conversations;
         final StringBuilder querySB;
 
         conversations = new ArrayList<Conversation>();

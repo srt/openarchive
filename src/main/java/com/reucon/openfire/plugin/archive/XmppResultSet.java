@@ -1,4 +1,4 @@
-package com.reucon.openfire.plugin.archive.xep0136;
+package com.reucon.openfire.plugin.archive;
 
 import org.dom4j.Element;
 import org.dom4j.QName;
@@ -7,7 +7,7 @@ import org.dom4j.DocumentFactory;
 /**
  * A XEP-0059 result set.
  */
-public class Xep0059ResultSet
+public class XmppResultSet
 {
     private String before;
     private String after;
@@ -18,7 +18,7 @@ public class Xep0059ResultSet
     private String last;
     private int count = -1;
 
-    public Xep0059ResultSet(Element setElement)
+    public XmppResultSet(Element setElement)
     {
         this.before = setElement.attributeValue("before");
         this.after = setElement.attributeValue("after");

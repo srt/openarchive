@@ -31,7 +31,7 @@ public class IQListHandler extends AbstractIQHandler
         return reply;
     }
 
-    private Collection<Conversation> list(JID from, ListRequest request)
+    private List<Conversation> list(JID from, ListRequest request)
     {
         final List<String> participants = new ArrayList<String>();
 
@@ -41,6 +41,6 @@ public class IQListHandler extends AbstractIQHandler
             participants.add(request.getWith());
         }
 
-        return getIndexManager().findConversations((String[]) participants.toArray(), request.getStart(), request.getEnd(), null);
+        return getPersistenceManager().findConversations((String[]) participants.toArray(), request.getStart(), request.getEnd());
     }
 }

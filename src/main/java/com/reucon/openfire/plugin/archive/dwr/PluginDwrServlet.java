@@ -1,6 +1,9 @@
 package com.reucon.openfire.plugin.archive.dwr;
 
 import org.directwebremoting.servlet.DwrServlet;
+import org.directwebremoting.impl.StartupUtil;
+import org.directwebremoting.impl.ContainerUtil;
+import org.directwebremoting.Container;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -44,6 +47,23 @@ public class PluginDwrServlet extends DwrServlet
         {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             super.init(this);
+        }
+        finally
+        {
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
+        }
+    }
+
+    public void destroy()
+    {
+        final ClassLoader originalClassLoader;
+
+        originalClassLoader = Thread.currentThread().getContextClassLoader();
+        try
+        {
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            super.destroy();
+            //servletConfig.getServletContext().setAttribute(ContainerUtil.ATTRIBUTE_CONTAINER_LIST, null);
         }
         finally
         {

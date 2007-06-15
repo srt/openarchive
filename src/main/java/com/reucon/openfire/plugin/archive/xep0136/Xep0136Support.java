@@ -1,7 +1,9 @@
 package com.reucon.openfire.plugin.archive.xep0136;
 
 import org.jivesoftware.openfire.XMPPServer;
+import org.jivesoftware.openfire.IQRouter;
 import org.jivesoftware.openfire.disco.ServerFeaturesProvider;
+import org.jivesoftware.openfire.disco.IQDiscoInfoHandler;
 import org.jivesoftware.openfire.handler.IQHandler;
 import org.jivesoftware.util.Log;
 
@@ -53,9 +55,15 @@ public class Xep0136Support
 
     public void stop()
     {
+        IQRouter iqRouter = server.getIQRouter();
+        IQDiscoInfoHandler iqDiscoInfoHandler = server.getIQDiscoInfoHandler();
+
         for (IQHandler iqHandler : iqHandlers)
         {
-            server.getIQRouter().removeHandler(iqHandler);
+            if (iqRouter != null)
+            {
+                iqRouter.removeHandler(iqHandler);
+            }
             try
             {
                 iqHandler.stop();
@@ -70,7 +78,10 @@ public class Xep0136Support
             {
                 for (Iterator<String> i = ((ServerFeaturesProvider) iqHandler).getFeatures(); i.hasNext(); )
                 {
-                    server.getIQDiscoInfoHandler().removeServerFeature(i.next());
+                    if (iqDiscoInfoHandler != null)
+                    {
+                        iqDiscoInfoHandler.removeServerFeature(i.next());
+                    }
                 }
             }
         }

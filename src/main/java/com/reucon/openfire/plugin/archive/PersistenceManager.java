@@ -6,6 +6,7 @@ import com.reucon.openfire.plugin.archive.model.Participant;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Manages database persistence.
@@ -28,7 +29,7 @@ public interface PersistenceManager
 
     boolean createParticipant(Participant participant, Long conversationId);
 
-    Collection<Conversation> findConversations(String[] participants, Date startDate, Date endDate);
+    List<Conversation> findConversations(String[] participants, Date startDate, Date endDate);
 
     Collection<Conversation> getActiveConversations(int conversationTimeout);
 
