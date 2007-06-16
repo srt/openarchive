@@ -3,8 +3,12 @@ package com.reucon.openfire.plugin.archive.xep0136;
 import org.jivesoftware.openfire.auth.UnauthorizedException;
 import org.xmpp.packet.IQ;
 import org.xmpp.packet.JID;
+import org.dom4j.Element;
+import org.dom4j.DocumentFactory;
 import com.reucon.openfire.plugin.archive.model.Conversation;
 import com.reucon.openfire.plugin.archive.model.Participant;
+import com.reucon.openfire.plugin.archive.util.DateUtil;
+import com.reucon.openfire.plugin.archive.XmppResultSet;
 
 import java.util.List;
 import java.util.Collection;
@@ -26,21 +30,85 @@ public class IQListHandler extends AbstractIQHandler
         ListRequest listRequest = new ListRequest(packet.getChildElement());
         JID from = packet.getFrom();
 
-        
+        Element listElement = reply.setChildElement("list", NAMESPACE);
+        List<Conversation> conversations = list(packet.getFrom(), listRequest);
+        XmppResultSet resultSet = listRequest.getResultSet();
+
+        if (resultSet == null)
+        {
+            for (Conversation conversation : conversations)
+            {
+                addChatElement(listElement, packet, conversation);
+            }
+        }
+        else
+        {
+            int start = resultSet.getIndex() < 0 ? 0 : resultSet.getIndex();
+            boolean skip = false;
+
+            if (resultSet.getAfter() != null)
+            {
+                skip = true;
+            }
+
+            for (int i = start; i < conversations.size(); i++)
+            {
+                if (skip)
+                {
+                    continue;
+                }
+                
+                addChatElement(listElement, packet, conversations.get(i));
+            }
+        }
 
         return reply;
     }
 
     private List<Conversation> list(JID from, ListRequest request)
     {
-        final List<String> participants = new ArrayList<String>();
+        final String[] participants;
 
-        participants.add(from.toBareJID());
-        if (request.getWith() != null)
+        if (request.getWith() == null)
         {
-            participants.add(request.getWith());
+            participants = new String[1];
         }
+        else
+        {
+            participants = new String[2];
+            participants[1] = request.getWith();
+        }
+        participants[0] = from.toBareJID();
 
-        return getPersistenceManager().findConversations((String[]) participants.toArray(), request.getStart(), request.getEnd());
+        return getPersistenceManager().findConversations(participants, request.getStart(), request.getEnd());
+    }
+
+    private Element addChatElement(Element listElement, IQ packet, Conversation conversation)
+    {
+        Element chatElement = listElement.addElement("chat");
+        String with = null;
+        
+        if (conversation.getRoomJid() != null)
+        {
+            with = conversation.getRoomJid();
+        }
+        else
+        {
+            for (Participant participant : conversation.getParticipants())
+            {
+                if (! participant.getJid().equals(packet.getFrom().toBareJID()))
+                {
+                    with = participant.getJid();
+                }
+            }
+            if (with == null)
+            {
+                with = packet.getFrom().toBareJID();
+            }
+        }
+        chatElement.addAttribute("with", with);
+        chatElement.addAttribute("start", DateUtil.formatDate(conversation.getStart()));
+
+        return chatElement;
     }
 }

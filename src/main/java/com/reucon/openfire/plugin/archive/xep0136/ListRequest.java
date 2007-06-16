@@ -20,9 +20,18 @@ public class ListRequest
 
     public ListRequest(Element listElement)
     {
-        this.with = listElement.attributeValue("with");
-        this.start = DateUtil.parseDate(listElement.attributeValue("start"));
-        this.end = DateUtil.parseDate(listElement.attributeValue("end"));
+        if (listElement.attribute("with") != null)
+        {
+            this.with = listElement.attributeValue("with");
+        }
+        if (listElement.attribute("start") != null)
+        {
+            this.start = DateUtil.parseDate(listElement.attributeValue("start"));
+        }
+        if (listElement.attribute("end") != null)
+        {
+            this.end = DateUtil.parseDate(listElement.attributeValue("end"));
+        }
 
         Element setElement = listElement.element(QName.get("set", "http://jabber.org/protocol/rsm"));
         if (setElement != null)
