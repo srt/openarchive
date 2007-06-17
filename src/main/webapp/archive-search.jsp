@@ -174,7 +174,6 @@
                         <tr valign="top">
                             <td>
                                 <input type="text" id="p1" name="p1" size="30" value=""/>
-
                                 <div id="p1_suggestions" class="auto_complete"></div>
                             </td>
                             <td><img src="images/magnifier.png" alt="" vspace="3" id="p1Trigger"/></td>
@@ -182,7 +181,6 @@
                         <tr valign="top">
                             <td>
                                 <input type="text" id="p2" name="p2" size="30" value=""/>
-
                                 <div id="p2_suggestions" class="auto_complete"></div>
                             </td>
                             <td><img src="images/magnifier.png" alt="" vspace="3" id="p2Trigger"/></td>
@@ -247,13 +245,18 @@
                                         key="archive.search.keywords.description"/></span>
                             </td>
                         </tr>
+                        <tr valign="top">
+                            <td align="right">
+                                <br/>
+                                <input type="submit" name="search" value="<fmt:message key="archive.search.submit"/>"
+                                       onclick="findConversations(); return false"/>
+                            </td>
+                        </tr>
                     </table>
                 </td>
             </tr>
         </table>
     </div>
-    <input type="submit" name="search" value="<fmt:message key="archive.search.submit"/>"
-           onclick="findConversations(); return false"/>
 </form>
 
 <table id="result" style="display:none;">

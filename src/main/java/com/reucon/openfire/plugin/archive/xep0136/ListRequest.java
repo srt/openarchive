@@ -33,7 +33,7 @@ public class ListRequest
             this.end = DateUtil.parseDate(listElement.attributeValue("end"));
         }
 
-        Element setElement = listElement.element(QName.get("set", "http://jabber.org/protocol/rsm"));
+        Element setElement = listElement.element(QName.get("set", XmppResultSet.NAMESPACE));
         if (setElement != null)
         {
             resultSet = new XmppResultSet(setElement);

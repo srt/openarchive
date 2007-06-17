@@ -45,6 +45,7 @@ public class IQListHandler extends AbstractIQHandler
         {
             int start = resultSet.getIndex() < 0 ? 0 : resultSet.getIndex();
             boolean skip = false;
+            int num = 0;
 
             if (resultSet.getAfter() != null)
             {
@@ -53,12 +54,24 @@ public class IQListHandler extends AbstractIQHandler
 
             for (int i = start; i < conversations.size(); i++)
             {
+                Conversation conversation = conversations.get(i);
+
                 if (skip)
                 {
+                    if (resultSet.getAfter() != null && resultSet.getAfter().equals(conversation.getId()))
+                    {
+                        skip = false;
+                    }
                     continue;
                 }
-                
-                addChatElement(listElement, packet, conversations.get(i));
+
+                addChatElement(listElement, packet, conversation);
+                num++;
+
+                if (resultSet.getMax() > 0 && num >= resultSet.getMax())
+                {
+                    break;
+                }
             }
         }
 

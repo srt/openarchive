@@ -9,6 +9,7 @@ import org.dom4j.DocumentFactory;
  */
 public class XmppResultSet
 {
+    public static String NAMESPACE = "http://jabber.org/protocol/rsm";
     private String before;
     private String after;
     private int index = -1;
@@ -90,7 +91,7 @@ public class XmppResultSet
     {
         final Element set;
 
-        set = DocumentFactory.getInstance().createElement("set", "http://jabber.org/protocol/rsm");
+        set = DocumentFactory.getInstance().createElement("set", NAMESPACE);
         if (first != null || firstIndex != -1)
         {
             final Element firstElement = set.addElement("first");
