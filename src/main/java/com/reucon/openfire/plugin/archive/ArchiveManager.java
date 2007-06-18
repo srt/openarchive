@@ -11,10 +11,12 @@ public interface ArchiveManager
     /**
      * Adds a message to the archive.
      *
-     * @param session the session the message was received through.
-     * @param message the message to archive.
+     * @param session  the session the message was received through.
+     * @param message  the message to archive.
+     * @param incoming <code>true</code> if this a message received by the server, <code>false</code> if it
+     *                 is sent by the server.
      */
-    void archiveMessage(Session session, Message message);
+    void archiveMessage(Session session, Message message, boolean incoming);
 
     /**
      * Sets the conversation timeout.<p>

@@ -55,7 +55,7 @@
     var cellFuncs = [
             function(data)
             {
-                return data.participants
+                return data.ownerWith
             },
             function(data)
             {

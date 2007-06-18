@@ -13,26 +13,24 @@ public class Conversation
     private Long id;
     private final Date start;
     private Date end;
-    private final String roomJid;
+    private final String ownerJid;
+    private final String withJid;
     private final List<Participant> participants;
     private final List<ArchivedMessage> messages;
 
+
     public Conversation(Long id)
     {
-        this(null, null);
+        this(null, null, null);
         this.id = id;
     }
 
-    public Conversation(Date start)
-    {
-        this(start, null);
-    }
-
-    public Conversation(Date start, String roomJid)
+    public Conversation(Date start, String ownerJid, String withJid)
     {
         this.start = start;
         this.end = start;
-        this.roomJid = roomJid;
+        this.ownerJid = ownerJid;
+        this.withJid = withJid;
         participants = new ArrayList<Participant>();
         messages = new ArrayList<ArchivedMessage>();
     }
@@ -62,9 +60,14 @@ public class Conversation
         this.end = end;
     }
 
-    public String getRoomJid()
+    public String getOwnerJid()
     {
-        return roomJid;
+        return ownerJid;
+    }
+
+    public String getWithJid()
+    {
+        return withJid;
     }
 
     public Collection<Participant> getParticipants()

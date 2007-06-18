@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.ArrayList;
 
 /**
- * Message Archiving Preferences Handler.
+ * Message Archiving List Handler.
  */
 public class IQListHandler extends AbstractIQHandler
 {
@@ -101,25 +101,7 @@ public class IQListHandler extends AbstractIQHandler
         Element chatElement = listElement.addElement("chat");
         String with = null;
         
-        if (conversation.getRoomJid() != null)
-        {
-            with = conversation.getRoomJid();
-        }
-        else
-        {
-            for (Participant participant : conversation.getParticipants())
-            {
-                if (! participant.getJid().equals(packet.getFrom().toBareJID()))
-                {
-                    with = participant.getJid();
-                }
-            }
-            if (with == null)
-            {
-                with = packet.getFrom().toBareJID();
-            }
-        }
-        chatElement.addAttribute("with", with);
+        chatElement.addAttribute("with", conversation.getWithJid());
         chatElement.addAttribute("start", DateUtil.formatDate(conversation.getStart()));
 
         return chatElement;

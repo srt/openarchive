@@ -40,6 +40,8 @@ public class LuceneIndexManager implements IndexManager, Runnable
     private static final String FIELD_MESSAGE_ID = "messageId";
     private static final String FIELD_CONVERSATION_ID = "conversationId";
     private static final String FIELD_TIME = "time";
+    private static final String FIELD_OWNER_JID = "ownerJid";
+    private static final String FIELD_WITH_JID = "withJid";
     private static final String FIELD_PARTICIPANT = "participant";
     private static final String FIELD_TYPE = "type";
     private static final String FIELD_SUBJECT = "subject";
@@ -460,7 +462,8 @@ public class LuceneIndexManager implements IndexManager, Runnable
 
     private Document createDocument(ArchivedMessage message)
     {
-        Document doc;
+        final Document doc;
+        final Conversation conversation = message.getConversation();
 
         if (message.getId() == null)
         {
@@ -475,6 +478,8 @@ public class LuceneIndexManager implements IndexManager, Runnable
             doc.add(new Field(FIELD_CONVERSATION_ID, message.getConversation().getId().toString(), Field.Store.YES, Field.Index.NO));
         }
         doc.add(new Field(FIELD_TIME, dateToString(message.getTime()), Field.Store.YES, Field.Index.UN_TOKENIZED));
+        doc.add(new Field(FIELD_OWNER_JID, conversation.getOwnerJid(), Field.Store.YES, Field.Index.UN_TOKENIZED));
+        doc.add(new Field(FIELD_WITH_JID, conversation.getWithJid(), Field.Store.YES, Field.Index.UN_TOKENIZED));
         doc.add(new Field(FIELD_PARTICIPANT, message.getFrom(), Field.Store.YES, Field.Index.UN_TOKENIZED));
         doc.add(new Field(FIELD_PARTICIPANT, message.getTo(), Field.Store.YES, Field.Index.UN_TOKENIZED));
         doc.add(new Field(FIELD_TYPE, message.getType(), Field.Store.YES, Field.Index.UN_TOKENIZED));

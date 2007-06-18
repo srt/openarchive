@@ -22,43 +22,46 @@ import org.jivesoftware.util.Log;
 public class JdbcPersistenceManager implements PersistenceManager
 {
     public static final String CREATE_MESSAGE =
-            "INSERT INTO archiveMessages (messageID,time,originalId,fromJid,fromResource," +
-                    " toJid,toResource,peerIpAddress,type,thread,subject,body,conversationID) " +
+            "INSERT INTO archiveMessages (messageId,time,originalId,fromJid,fromResource," +
+                    " toJid,toResource,peerIpAddress,type,thread,subject,body,conversationId) " +
                     "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
     public static final String SELECT_ALL_MESSAGES =
-            "SELECT messageID,time,originalId,fromJid,fromResource," +
-                    " toJid,toResource,peerIpAddress,type,thread,subject,body,conversationID " +
-                    "FROM archiveMessages";
+            "SELECT m.messageId,m.time,m.originalId,m.fromJid,m.fromResource," +
+                    " m.toJid,m.toResource,m.peerIpAddress,m.type,m.thread,m.subject,m.body," +
+                    " c.conversationId,c.startTime,c.endTime,c.ownerJid,c.withJid " +
+                    "FROM archiveMessages AS m, archiveConversations AS c " +
+                    "WHERE m.conversationId = c.conversationId " +
+                    "ORDER BY c.conversationId";
 
     public static final String SELECT_MESSAGES_BY_CONVERSATION =
-            "SELECT messageID,time,originalId,fromJid,fromResource," +
-                    " toJid,toResource,peerIpAddress,type,thread,subject,body,conversationID " +
+            "SELECT messageId,time,originalId,fromJid,fromResource," +
+                    " toJid,toResource,peerIpAddress,type,thread,subject,body,conversationId " +
                     "FROM archiveMessages WHERE conversationId = ? ORDER BY time";
     
     public static final String CREATE_CONVERSATION =
-            "INSERT INTO archiveConversations (conversationID,startTime,endTime,roomJid) " +
-                    "VALUES (?,?,?,?)";
+            "INSERT INTO archiveConversations (conversationId,startTime,endTime,ownerJid,withJid) " +
+                    "VALUES (?,?,?,?,?)";
 
     public static final String UPDATE_CONVERSATION_END =
-            "UPDATE archiveConversations SET endTime = ? WHERE conversationID = ?";
+            "UPDATE archiveConversations SET endTime = ? WHERE conversationId = ?";
 
     public static final String ADD_PARTICIPANT =
-            "INSERT INTO archiveParticipants (participantID,startTime,endTime,jid,conversationID) " +
+            "INSERT INTO archiveParticipants (participantId,startTime,endTime,jid,conversationId) " +
                     "VALUES (?,?,?,?,?)";
 
     public static final String SELECT_CONVERSATION =
-            "SELECT conversationID,startTime,endTime,roomJid FROM archiveConversations WHERE conversationId = ?";
+            "SELECT conversationId,startTime,endTime,ownerJid,withJid FROM archiveConversations WHERE conversationId = ?";
 
     public static final String SELECT_CONVERSATIONS =
-            "SELECT c.conversationID,c.startTime,c.endTime,c.roomJid FROM archiveConversations AS c";
-    public static final String CONVERSATION_ID = "c.conversationID";
+            "SELECT c.conversationId,c.startTime,c.endTime,c.ownerJid,c.withJid FROM archiveConversations AS c";
+    public static final String CONVERSATION_ID = "c.conversationId";
 
     public static final String SELECT_ACTIVE_CONVERSATIONS =
-            "SELECT conversationID,startTime,endTime,roomJid FROM archiveConversations WHERE endTime > ?";
+            "SELECT conversationId,startTime,endTime,ownerJid,withJid FROM archiveConversations WHERE endTime > ?";
 
     public static final String SELECT_PARTICIPANTS_BY_CONVERSATION =
-            "SELECT participantID,startTime,endTime,jid FROM archiveParticipants WHERE conversationID =? ORDER BY startTime";
+            "SELECT participantId,startTime,endTime,jid FROM archiveParticipants WHERE conversationId =? ORDER BY startTime";
 
     public boolean saveMessage(ArchivedMessage message)
     {
@@ -102,11 +105,11 @@ public class JdbcPersistenceManager implements PersistenceManager
 
     public int selectAllMessages(ArchivedMessageConsumer callback)
     {
-        long id;
         int numMessagesProcessed = 0;
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
+        Conversation conversation = null;
         try
         {
             con = DbConnectionManager.getConnection();
@@ -118,6 +121,13 @@ public class JdbcPersistenceManager implements PersistenceManager
                 ArchivedMessage message;
 
                 message = extractMessage(rs);
+                if (conversation == null || ! conversation.getId().equals(rs.getLong(13)))
+                {
+                    conversation = new Conversation(millisToDate(rs.getLong(14)), rs.getString(16), rs.getString(17));
+                    conversation.setId(rs.getLong(13));
+                    conversation.setEnd(millisToDate(rs.getLong(15)));
+                }
+                message.setConversation(conversation);
 
                 try
                 {
@@ -156,7 +166,7 @@ public class JdbcPersistenceManager implements PersistenceManager
         message.setThread(rs.getString(10));
         message.setSubject(rs.getString(11));
         message.setBody(rs.getString(12));
-        message.setConversation(new Conversation(rs.getLong(13)));
+        //message.setConversation(new Conversation(rs.getLong(13)));
         return message;
     }
 
@@ -174,7 +184,8 @@ public class JdbcPersistenceManager implements PersistenceManager
             pstmt.setLong(1, id);
             pstmt.setLong(2, dateToMillis(conversation.getStart()));
             pstmt.setLong(3, dateToMillis(conversation.getEnd()));
-            pstmt.setString(4, conversation.getRoomJid());
+            pstmt.setString(4, conversation.getOwnerJid());
+            pstmt.setString(5, conversation.getWithJid());
             pstmt.executeUpdate();
 
             conversation.setId(id);
@@ -332,7 +343,7 @@ public class JdbcPersistenceManager implements PersistenceManager
             {
                 Conversation conversation;
 
-                conversation = new Conversation(millisToDate(rs.getLong(2)), rs.getString(4));
+                conversation = new Conversation(millisToDate(rs.getLong(2)), rs.getString(4), rs.getString(5));
                 conversation.setId(rs.getLong(1));
                 conversation.setEnd(millisToDate(rs.getLong(3)));
                 conversations.add(conversation);
@@ -387,7 +398,7 @@ public class JdbcPersistenceManager implements PersistenceManager
             {
                 Conversation conversation;
 
-                conversation = new Conversation(millisToDate(rs.getLong(2)), rs.getString(4));
+                conversation = new Conversation(millisToDate(rs.getLong(2)), rs.getString(4), rs.getString(5));
                 conversation.setId(rs.getLong(1));
                 conversation.setEnd(millisToDate(rs.getLong(3)));
                 conversations.add(conversation);
@@ -467,7 +478,7 @@ public class JdbcPersistenceManager implements PersistenceManager
             {
                 Conversation conversation;
 
-                conversation = new Conversation(millisToDate(rs.getLong(2)), rs.getString(4));
+                conversation = new Conversation(millisToDate(rs.getLong(2)), rs.getString(4), rs.getString(5));
                 conversation.setId(rs.getLong(1));
                 conversation.setEnd(millisToDate(rs.getLong(3)));
                 conversations.add(conversation);
@@ -527,7 +538,7 @@ public class JdbcPersistenceManager implements PersistenceManager
             rs = pstmt.executeQuery();
             if (rs.next())
             {
-                conversation = new Conversation(millisToDate(rs.getLong(2)), rs.getString(4));
+                conversation = new Conversation(millisToDate(rs.getLong(2)), rs.getString(4), rs.getString(5));
                 conversation.setId(rs.getLong(1));
                 conversation.setEnd(millisToDate(rs.getLong(3)));
             }
@@ -562,6 +573,7 @@ public class JdbcPersistenceManager implements PersistenceManager
                 ArchivedMessage message;
 
                 message = extractMessage(rs);
+                message.setConversation(conversation);
                 conversation.addMessage(message);
             }
         }

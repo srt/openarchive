@@ -2,7 +2,8 @@ CREATE TABLE archiveConversations (
   conversationId        BIGINT          NOT NULL PRIMARY KEY,
   startTime             BIGINT          NOT NULL,
   endTime               BIGINT          NOT NULL,
-  roomJid               VARCHAR(255)
+  ownerJid              VARCHAR(255)    NOT NULL,
+  withJid               VARCHAR(255)    NOT NULL,
 );
 
 CREATE TABLE archiveParticipants (

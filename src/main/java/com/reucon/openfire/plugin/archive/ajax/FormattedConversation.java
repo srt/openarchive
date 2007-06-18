@@ -14,11 +14,13 @@ import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Date;
 
 public class FormattedConversation implements Comparable<FormattedConversation>
 {
-    private final Comparable sort;
+    private final Date sort;
     private long conversationId;
+    private String ownerWith;
     private String participantsMultiLine;
     private String participantsSingleLine;
     private String date;
@@ -54,6 +56,7 @@ public class FormattedConversation implements Comparable<FormattedConversation>
         }
         participantsMultiLine = participantsMultiLineSB.toString();
         participantsSingleLine = participantsSingleLineSB.toString();
+        ownerWith = resolveJid(conversation.getOwnerJid()) + "<br/>" + resolveJid(conversation.getWithJid());
 
         if (startDateString.equals(endDateString))
         {
@@ -146,6 +149,7 @@ public class FormattedConversation implements Comparable<FormattedConversation>
 
     /**
      * Returns the participants separated by &lt;br/&gt;.
+     *
      * @return the participants separated by &lt;br/&gt;.
      */
     public String getParticipants()
@@ -155,11 +159,22 @@ public class FormattedConversation implements Comparable<FormattedConversation>
 
     /**
      * Returns the participants separated by comma.
+     *
      * @return the participants separated by comma.
      */
     public String getParticipantsSingleLine()
     {
         return participantsSingleLine;
+    }
+
+    /**
+     * Returns owner and "with" jid/name separated by &lt;br/&gt;.
+     *
+     * @return owner and "with" jid/name separated by &lt;br/&gt;.
+     */
+    public String getOwnerWith()
+    {
+        return ownerWith;
     }
 
     /**

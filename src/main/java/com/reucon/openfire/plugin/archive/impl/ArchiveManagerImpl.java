@@ -8,7 +8,9 @@ import com.reucon.openfire.plugin.archive.model.ArchivedMessage;
 import com.reucon.openfire.plugin.archive.model.Conversation;
 import com.reucon.openfire.plugin.archive.model.Participant;
 import org.jivesoftware.openfire.session.Session;
+import org.jivesoftware.openfire.XMPPServer;
 import org.xmpp.packet.Message;
+import org.xmpp.packet.JID;
 
 import java.util.*;
 
@@ -32,13 +34,31 @@ public class ArchiveManagerImpl implements ArchiveManager
         activeConversations = persistenceManager.getActiveConversations(conversationTimeout);
     }
 
-    public void archiveMessage(Session session, Message message)
+    public void archiveMessage(Session session, Message message, boolean incoming)
     {
+        final XMPPServer server = XMPPServer.getInstance();
         final ArchivedMessage archivedMessage;
         final Conversation conversation;
+        final JID ownerJid;
+        final JID withJid;
 
         // TODO support groupchat
         if (! (message.getType() == Message.Type.normal || message.getType() == Message.Type.chat))
+        {
+            return;
+        }
+
+        if (server.isLocal(message.getFrom()) && incoming)
+        {
+            ownerJid = message.getFrom();
+            withJid = message.getTo();
+        }
+        else if (server.isLocal(message.getTo()) && ! incoming)
+        {
+            ownerJid = message.getTo();
+            withJid = message.getFrom();
+        }
+        else
         {
             return;
         }
@@ -49,7 +69,7 @@ public class ArchiveManagerImpl implements ArchiveManager
             return;
         }
 
-        conversation = determineConversation(archivedMessage);
+        conversation = determineConversation(ownerJid, withJid, archivedMessage);
         archivedMessage.setConversation(conversation);
 
         persistenceManager.saveMessage(archivedMessage);
@@ -64,7 +84,7 @@ public class ArchiveManagerImpl implements ArchiveManager
         this.conversationTimeout = conversationTimeout;
     }
 
-    private Conversation determineConversation(ArchivedMessage archivedMessage)
+    private Conversation determineConversation(JID ownerJid, JID withJid, ArchivedMessage archivedMessage)
     {
         Conversation conversation = null;
         Collection<Conversation> staleConversations;
@@ -80,7 +100,7 @@ public class ArchiveManagerImpl implements ArchiveManager
                     continue;
                 }
 
-                if (c.hasParticipant(archivedMessage.getTo()) && c.hasParticipant(archivedMessage.getFrom()))
+                if (ownerJid.toBareJID().equals(c.getOwnerJid()) && withJid.toBareJID().equals(c.getWithJid()))
                 {
                     conversation = c;
                     break;
@@ -94,7 +114,7 @@ public class ArchiveManagerImpl implements ArchiveManager
                 final Participant p1;
                 final Participant p2;
 
-                conversation = new Conversation(archivedMessage.getTime());
+                conversation = new Conversation(archivedMessage.getTime(), ownerJid.toBareJID(), withJid.toBareJID());
                 persistenceManager.createConversation(conversation);
 
                 p1 = new Participant(archivedMessage.getTime(), archivedMessage.getFrom());

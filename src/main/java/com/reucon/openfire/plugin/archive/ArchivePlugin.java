@@ -6,6 +6,7 @@ import com.reucon.openfire.plugin.archive.impl.LuceneIndexManager;
 import com.reucon.openfire.plugin.archive.xep0136.Xep0136Support;
 import com.reucon.openfire.plugin.archive.xep0136.IQPrefHandler;
 import org.jivesoftware.openfire.XMPPServer;
+import org.jivesoftware.openfire.user.UserManager;
 import org.jivesoftware.openfire.container.Plugin;
 import org.jivesoftware.openfire.container.PluginManager;
 import org.jivesoftware.openfire.interceptor.InterceptorManager;
@@ -120,7 +121,7 @@ public class ArchivePlugin implements Plugin, PacketInterceptor
 
         if (packet instanceof Message)
         {
-            archiveManager.archiveMessage(session, (Message) packet);
+            archiveManager.archiveMessage(session, (Message) packet, incoming);
         }
     }
 
@@ -179,7 +180,24 @@ public class ArchivePlugin implements Plugin, PacketInterceptor
 
     private boolean isValidTargetPacket(Packet packet, boolean incoming, boolean processed)
     {
-        return processed && incoming && (packet instanceof Message || packet instanceof Presence);
+        if (! (packet instanceof Message) && ! (packet instanceof Presence))
+        {
+            return false;
+        }
+        if (! processed)
+        {
+            return false;
+        }
+
+        if (server.isLocal(packet.getFrom()) && incoming)
+        {
+            return true;
+        }
+        if (server.isLocal(packet.getTo()) && ! incoming)
+        {
+            return true;
+        }
+        return false;
     }
 
     /**
