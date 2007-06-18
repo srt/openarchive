@@ -24,8 +24,7 @@ public interface PersistenceManager
     int selectAllMessages(ArchivedMessageConsumer callback);
 
     /**
-     * Creates a new conversation. The id attribute will be set to the id assigned by the database.
-     *
+     * Creates a b
      * @param conversation the conversation to create.
      * @return <code>true</code> on success, <code>false</code> otherwise.
      */
