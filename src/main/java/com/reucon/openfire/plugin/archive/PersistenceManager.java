@@ -57,7 +57,7 @@ public interface PersistenceManager
 
     Collection<Conversation> getActiveConversations(int conversationTimeout);
 
-    Collection<Conversation> getConversations(Collection<Long> conversationIds);
+    List<Conversation> getConversations(Collection<Long> conversationIds);
 
     /**
      * Returns the conversation with the given owner, with and start time including participants and messages.

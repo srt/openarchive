@@ -466,7 +466,7 @@ public class JdbcPersistenceManager implements PersistenceManager
         return conversations;
     }
 
-    public Collection<Conversation> getConversations(Collection<Long> conversationIds)
+    public List<Conversation> getConversations(Collection<Long> conversationIds)
     {
         final List<Conversation> conversations;
         final StringBuilder querySB;
@@ -493,7 +493,8 @@ public class JdbcPersistenceManager implements PersistenceManager
             }
         }
         querySB.append(" )");
-
+        querySB.append(" ORDER BY ").append(CONVERSATION_END_TIME);
+        
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;

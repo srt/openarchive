@@ -28,23 +28,32 @@ public class IQPrefHandler extends AbstractIQHandler implements ServerFeaturesPr
         IQ reply = IQ.createResultIQ(packet);
         Element prefRequest = packet.getChildElement();
 
-        JID from = packet.getFrom();
-
-        System.err.println("Received pref message from " + from);
+        System.err.println("Received pref message from " + packet.getFrom());
 
         if (prefRequest.element("default") != null)
         {
+            Element defaultItem = prefRequest.element("default");
+
             // User requests to set default modes
+            defaultItem.attribute("save"); // body, false, message, stream
+            defaultItem.attribute("otr");
+            defaultItem.attribute("expire");
         }
 
         for (Element item : (List<Element>) prefRequest.elements("item"))
         {
             // User requests to set modes for a contact
+            item.attribute("jid");
+            item.attribute("save"); // body, false, message, stream
+            item.attribute("otr");
+            item.attribute("expire");
         }
 
         for (Element method : (List<Element>) prefRequest.elements("method"))
         {
             // User requests to set archiving method preferences
+            method.attribute("type");
+            method.attribute("use");
         }
 
         return reply;

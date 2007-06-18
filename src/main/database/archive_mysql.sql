@@ -4,6 +4,8 @@ CREATE TABLE archiveConversations (
   endTime               BIGINT          NOT NULL,
   ownerJid              VARCHAR(255)    NOT NULL,
   withJid               VARCHAR(255)    NOT NULL,
+  subject               VARCHAR(255),
+  thread                VARCHAR(255),
   PRIMARY KEY (conversationId),
   INDEX idx_archiveConversations_startTime (startTime),
   INDEX idx_archiveConversations_endTime (endTime),
@@ -43,12 +45,19 @@ CREATE TABLE archiveMessages (
 );
 
 CREATE TABLE archivePrefItems (
-  prefItemId            BIGINT          NOT NULL,
   ownerJid              VARCHAR(255)    NOT NULL,
+  jid                   VARCHAR(255),
   saveMode              INTEGER,
   otrMode               INTEGER,
   expireTime            BIGINT
+  PRIMARY KEY (ownerJid,jid)
 }
 
+CREATE TABLE archivePrefMethods (
+  ownerJid              VARCHAR(255)    NOT NULL,
+  method                VARCHAR(255)    NOT NULL,
+  use                   INTEGER,
+  PRIMARY KEY (ownerJid,method)
+}
 
 INSERT INTO jiveVersion (name, version) VALUES ('archive', 2);
