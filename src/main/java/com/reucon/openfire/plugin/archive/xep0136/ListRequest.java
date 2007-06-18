@@ -1,6 +1,6 @@
 package com.reucon.openfire.plugin.archive.xep0136;
 
-import com.reucon.openfire.plugin.archive.util.DateUtil;
+import com.reucon.openfire.plugin.archive.util.XmppDateUtil;
 import com.reucon.openfire.plugin.archive.XmppResultSet;
 import org.dom4j.Element;
 import org.dom4j.QName;
@@ -26,11 +26,11 @@ public class ListRequest
         }
         if (listElement.attribute("start") != null)
         {
-            this.start = DateUtil.parseDate(listElement.attributeValue("start"));
+            this.start = XmppDateUtil.parseDate(listElement.attributeValue("start"));
         }
         if (listElement.attribute("end") != null)
         {
-            this.end = DateUtil.parseDate(listElement.attributeValue("end"));
+            this.end = XmppDateUtil.parseDate(listElement.attributeValue("end"));
         }
 
         Element setElement = listElement.element(QName.get("set", XmppResultSet.NAMESPACE));

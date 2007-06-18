@@ -1,6 +1,7 @@
 package com.reucon.openfire.plugin.archive.xep0136;
 
-import com.reucon.openfire.plugin.archive.util.DateUtil;
+import com.reucon.openfire.plugin.archive.util.XmppDateUtil;
+import com.reucon.openfire.plugin.archive.XmppResultSet;
 import org.dom4j.Element;
 import org.dom4j.QName;
 
@@ -14,22 +15,17 @@ public class RetrieveRequest
     private String with;
     private Date start;
 
-    private int max = -1;
-    private String after;
+    private XmppResultSet resultSet;
 
     public RetrieveRequest(Element listElement)
     {
         this.with = listElement.attributeValue("with");
-        this.start = DateUtil.parseDate(listElement.attributeValue("start"));
+        this.start = XmppDateUtil.parseDate(listElement.attributeValue("start"));
 
-        Element rsmElement = listElement.element(QName.get("set", "http://jabber.org/protocol/rsm"));
-        if (rsmElement != null)
+        Element setElement = listElement.element(QName.get("set", XmppResultSet.NAMESPACE));
+        if (setElement != null)
         {
-            if (rsmElement.attribute("max") != null)
-            {
-                this.max = Integer.parseInt(rsmElement.attributeValue("max"));
-            }
-            this.after = rsmElement.attributeValue("after");
+            resultSet = new XmppResultSet(setElement);
         }
     }
 
@@ -43,13 +39,8 @@ public class RetrieveRequest
         return start;
     }
 
-    public int getMax()
+    public XmppResultSet getResultSet()
     {
-        return max;
-    }
-
-    public String getAfter()
-    {
-        return after;
+        return resultSet;
     }
 }

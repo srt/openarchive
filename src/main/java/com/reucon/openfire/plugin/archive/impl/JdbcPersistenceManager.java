@@ -50,12 +50,13 @@ public class JdbcPersistenceManager implements PersistenceManager
             "INSERT INTO archiveParticipants (participantId,startTime,endTime,jid,conversationId) " +
                     "VALUES (?,?,?,?,?)";
 
-    public static final String SELECT_CONVERSATION =
-            "SELECT conversationId,startTime,endTime,ownerJid,withJid FROM archiveConversations WHERE conversationId = ?";
-
     public static final String SELECT_CONVERSATIONS =
             "SELECT c.conversationId,c.startTime,c.endTime,c.ownerJid,c.withJid FROM archiveConversations AS c";
     public static final String CONVERSATION_ID = "c.conversationId";
+    public static final String CONVERSATION_START_TIME = "c.startTime";
+    public static final String CONVERSATION_END_TIME = "c.endTime";
+    public static final String CONVERSATION_OWNER_JID = "c.ownerJid";
+    public static final String CONVERSATION_WITH_JID = "c.withJid";
 
     public static final String SELECT_ACTIVE_CONVERSATIONS =
             "SELECT conversationId,startTime,endTime,ownerJid,withJid FROM archiveConversations WHERE endTime > ?";
@@ -154,22 +155,6 @@ public class JdbcPersistenceManager implements PersistenceManager
         return numMessagesProcessed;
     }
 
-    private ArchivedMessage extractMessage(ResultSet rs)
-            throws SQLException
-    {
-        ArchivedMessage message;
-        message = new ArchivedMessage(millisToDate(rs.getLong(2)),
-                rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(9));
-        message.setId(rs.getLong(1));
-        message.setOriginalId(rs.getString(3));
-        message.setPeerIpAddress(rs.getString(8));
-        message.setThread(rs.getString(10));
-        message.setSubject(rs.getString(11));
-        message.setBody(rs.getString(12));
-        //message.setConversation(new Conversation(rs.getLong(13)));
-        return message;
-    }
-
     public boolean createConversation(Conversation conversation)
     {
         long id;
@@ -266,6 +251,97 @@ public class JdbcPersistenceManager implements PersistenceManager
         }
     }
 
+    public List<Conversation> findConversations(Date startDate, Date endDate, String ownerJid, String withJid)
+    {
+        final List<Conversation> conversations;
+        final StringBuilder querySB;
+        final StringBuilder whereSB;
+        int parameterIndex;
+
+        conversations = new ArrayList<Conversation>();
+
+        querySB = new StringBuilder(SELECT_CONVERSATIONS);
+        whereSB = new StringBuilder();
+
+        if (startDate != null)
+        {
+            if (whereSB.length() != 0)
+            {
+                whereSB.append(" AND ");
+            }
+            whereSB.append(CONVERSATION_START_TIME).append(" >= ?");
+        }
+        if (endDate != null)
+        {
+            if (whereSB.length() != 0)
+            {
+                whereSB.append(" AND ");
+            }
+            whereSB.append(CONVERSATION_END_TIME).append(" <= ?");
+        }
+        if (ownerJid != null)
+        {
+            if (whereSB.length() != 0)
+            {
+                whereSB.append(" AND ");
+            }
+            whereSB.append(CONVERSATION_OWNER_JID).append(" = ?");
+        }
+        if (withJid != null)
+        {
+            if (whereSB.length() != 0)
+            {
+                whereSB.append(" AND ");
+            }
+            whereSB.append(CONVERSATION_WITH_JID).append(" = ?");
+        }
+        querySB.append(" WHERE ").append(whereSB);
+        querySB.append(" ORDER BY ").append(CONVERSATION_START_TIME);
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try
+        {
+            con = DbConnectionManager.getConnection();
+            pstmt = con.prepareStatement(querySB.toString());
+
+            parameterIndex = 1;
+            if (startDate != null)
+            {
+                pstmt.setLong(parameterIndex++, dateToMillis(startDate));
+            }
+            if (endDate != null)
+            {
+                pstmt.setLong(parameterIndex++, dateToMillis(endDate));
+            }
+            if (ownerJid != null)
+            {
+                pstmt.setString(parameterIndex++, ownerJid);
+            }
+            if (withJid != null)
+            {
+                pstmt.setString(parameterIndex++, withJid);
+            }
+
+            rs = pstmt.executeQuery();
+            while (rs.next())
+            {
+                conversations.add(extractConversation(rs));
+            }
+        }
+        catch (SQLException sqle)
+        {
+            Log.error("Error selecting conversations", sqle);
+        }
+        finally
+        {
+            DbConnectionManager.closeConnection(rs, pstmt, con);
+        }
+
+        return conversations;
+    }
+
     public List<Conversation> findConversations(String[] participants, Date startDate, Date endDate)
     {
         final List<Conversation> conversations;
@@ -298,7 +374,7 @@ public class JdbcPersistenceManager implements PersistenceManager
             {
                 whereSB.append(" AND ");
             }
-            whereSB.append("c.startTime >= ?");
+            whereSB.append(CONVERSATION_START_TIME).append(" >= ?");
         }
         if (endDate != null)
         {
@@ -306,10 +382,10 @@ public class JdbcPersistenceManager implements PersistenceManager
             {
                 whereSB.append(" AND ");
             }
-            whereSB.append("c.endTime <= ?");
+            whereSB.append(CONVERSATION_END_TIME).append(" <= ?");
         }
         querySB.append(" WHERE ").append(whereSB);
-        querySB.append(" ORDER BY c.startTime");
+        querySB.append(" ORDER BY ").append(CONVERSATION_END_TIME);
 
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -341,31 +417,8 @@ public class JdbcPersistenceManager implements PersistenceManager
             rs = pstmt.executeQuery();
             while (rs.next())
             {
-                Conversation conversation;
-
-                conversation = new Conversation(millisToDate(rs.getLong(2)), rs.getString(4), rs.getString(5));
-                conversation.setId(rs.getLong(1));
-                conversation.setEnd(millisToDate(rs.getLong(3)));
-                conversations.add(conversation);
+                conversations.add(extractConversation(rs));
             }
-
-            /*
-            rs.close();
-            pstmt.close();
-
-            pstmt = con.prepareStatement(SELECT_PARTICIPANTS_BY_CONVERSATION);
-            for (Conversation conversation : conversations)
-            {
-                pstmt.setLong(1, conversation.getId());
-                rs = pstmt.executeQuery();
-                while (rs.next())
-                {
-                    Participant participant;
-                    participant = extractParticipant(rs);
-                    conversation.addParticipant(participant);
-                }
-            }
-            */
         }
         catch (SQLException sqle)
         {
@@ -398,31 +451,8 @@ public class JdbcPersistenceManager implements PersistenceManager
             rs = pstmt.executeQuery();
             while (rs.next())
             {
-                Conversation conversation;
-
-                conversation = new Conversation(millisToDate(rs.getLong(2)), rs.getString(4), rs.getString(5));
-                conversation.setId(rs.getLong(1));
-                conversation.setEnd(millisToDate(rs.getLong(3)));
-                conversations.add(conversation);
+                conversations.add(extractConversation(rs));
             }
-
-            /*
-            rs.close();
-            pstmt.close();
-
-            pstmt = con.prepareStatement(SELECT_PARTICIPANTS_BY_CONVERSATION);
-            for (Conversation conversation : conversations)
-            {
-                pstmt.setLong(1, conversation.getId());
-                rs = pstmt.executeQuery();
-                while (rs.next())
-                {
-                    Participant participant;
-                    participant = extractParticipant(rs);
-                    conversation.addParticipant(participant);
-                }
-            }
-            */
         }
         catch (SQLException sqle)
         {
@@ -480,31 +510,8 @@ public class JdbcPersistenceManager implements PersistenceManager
             rs = pstmt.executeQuery();
             while (rs.next())
             {
-                Conversation conversation;
-
-                conversation = new Conversation(millisToDate(rs.getLong(2)), rs.getString(4), rs.getString(5));
-                conversation.setId(rs.getLong(1));
-                conversation.setEnd(millisToDate(rs.getLong(3)));
-                conversations.add(conversation);
+                conversations.add(extractConversation(rs));
             }
-
-            /*
-            rs.close();
-            pstmt.close();
-
-            pstmt = con.prepareStatement(SELECT_PARTICIPANTS_BY_CONVERSATION);
-            for (Conversation conversation : conversations)
-            {
-                pstmt.setLong(1, conversation.getId());
-                rs = pstmt.executeQuery();
-                while (rs.next())
-                {
-                    Participant participant;
-                    participant = extractParticipant(rs);
-                    conversation.addParticipant(participant);
-                }
-            }
-            */
         }
         catch (SQLException sqle)
         {
@@ -518,35 +525,57 @@ public class JdbcPersistenceManager implements PersistenceManager
         return conversations;
     }
 
-    private Participant extractParticipant(ResultSet rs)
-            throws SQLException
+    public Conversation getConversation(String ownerJid, String withJid, Date start)
     {
-        Participant participant;
-        long end = rs.getLong(3);
-        participant = new Participant(millisToDate(rs.getLong(2)), rs.getString(4));
-        participant.setEnd(end == 0 ? null : millisToDate(end));
-        return participant;
+        return getConversation(null, ownerJid, withJid, start);
     }
 
     public Conversation getConversation(Long conversationId)
     {
+        return getConversation(conversationId, null, null, null);
+    }
+
+    private Conversation getConversation(Long conversationId, String ownerJid, String withJid, Date start)
+    {
         Conversation conversation = null;
+        StringBuilder querySB;
 
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
+
+        querySB = new StringBuilder(SELECT_CONVERSATIONS);
+        querySB.append(" WHERE ");
+        if (conversationId != null)
+        {
+            querySB.append(CONVERSATION_ID).append(" = ? ");
+        }
+        else
+        {
+            querySB.append(CONVERSATION_OWNER_JID).append(" = ? AND ");
+            querySB.append(CONVERSATION_WITH_JID).append(" = ? AND ");
+            querySB.append(CONVERSATION_START_TIME).append(" = ? ");
+        }
+
         try
         {
             con = DbConnectionManager.getConnection();
-            pstmt = con.prepareStatement(SELECT_CONVERSATION);
+            pstmt = con.prepareStatement(querySB.toString());
 
-            pstmt.setLong(1, conversationId);
+            if (conversationId != null)
+            {
+                pstmt.setLong(1, conversationId);
+            }
+            else
+            {
+                pstmt.setString(1, ownerJid);
+                pstmt.setString(2, withJid);
+                pstmt.setLong(3, dateToMillis(start));
+            }
             rs = pstmt.executeQuery();
             if (rs.next())
             {
-                conversation = new Conversation(millisToDate(rs.getLong(2)), rs.getString(4), rs.getString(5));
-                conversation.setId(rs.getLong(1));
-                conversation.setEnd(millisToDate(rs.getLong(3)));
+                conversation = extractConversation(rs);
             }
             else
             {
@@ -562,9 +591,7 @@ public class JdbcPersistenceManager implements PersistenceManager
             rs = pstmt.executeQuery();
             while (rs.next())
             {
-                Participant participant;
-                participant = extractParticipant(rs);
-                conversation.addParticipant(participant);
+                conversation.addParticipant(extractParticipant(rs));
             }
 
             rs.close();
@@ -593,6 +620,43 @@ public class JdbcPersistenceManager implements PersistenceManager
         }
 
         return conversation;
+    }
+
+    private Conversation extractConversation(ResultSet rs)
+            throws SQLException
+    {
+        Conversation conversation;
+
+        conversation = new Conversation(millisToDate(rs.getLong(2)), rs.getString(4), rs.getString(5));
+        conversation.setId(rs.getLong(1));
+        conversation.setEnd(millisToDate(rs.getLong(3)));
+        return conversation;
+    }
+
+    private Participant extractParticipant(ResultSet rs)
+            throws SQLException
+    {
+        Participant participant;
+        long end = rs.getLong(3);
+        participant = new Participant(millisToDate(rs.getLong(2)), rs.getString(4));
+        participant.setEnd(end == 0 ? null : millisToDate(end));
+        return participant;
+    }
+
+    private ArchivedMessage extractMessage(ResultSet rs)
+            throws SQLException
+    {
+        ArchivedMessage message;
+        message = new ArchivedMessage(millisToDate(rs.getLong(2)),
+                rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(9));
+        message.setId(rs.getLong(1));
+        message.setOriginalId(rs.getString(3));
+        message.setPeerIpAddress(rs.getString(8));
+        message.setThread(rs.getString(10));
+        message.setSubject(rs.getString(11));
+        message.setBody(rs.getString(12));
+        //message.setConversation(new Conversation(rs.getLong(13)));
+        return message;
     }
 
     private Long dateToMillis(Date date)

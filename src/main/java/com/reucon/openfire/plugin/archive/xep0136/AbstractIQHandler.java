@@ -5,6 +5,9 @@ import com.reucon.openfire.plugin.archive.PersistenceManager;
 import com.reucon.openfire.plugin.archive.IndexManager;
 import org.jivesoftware.openfire.IQHandlerInfo;
 import org.jivesoftware.openfire.handler.IQHandler;
+import org.xmpp.packet.Packet;
+import org.xmpp.packet.PacketError;
+import org.xmpp.packet.IQ;
 
 /**
  * Abstract base class for XEP-0136 IQ Handlers.
@@ -33,5 +36,16 @@ public abstract class AbstractIQHandler extends IQHandler
     protected IndexManager getIndexManager()
     {
         return ArchivePlugin.getInstance().getIndexManager();
+    }
+
+    protected IQ error(Packet packet, PacketError.Condition condition)
+    {
+        IQ reply;
+
+        reply = new IQ(IQ.Type.error, packet.getID());
+        reply.setFrom(packet.getTo());
+        reply.setTo(packet.getFrom());
+        reply.setError(condition);
+        return reply;
     }
 }

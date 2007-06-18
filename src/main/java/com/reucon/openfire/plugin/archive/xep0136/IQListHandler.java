@@ -4,15 +4,11 @@ import org.jivesoftware.openfire.auth.UnauthorizedException;
 import org.xmpp.packet.IQ;
 import org.xmpp.packet.JID;
 import org.dom4j.Element;
-import org.dom4j.DocumentFactory;
 import com.reucon.openfire.plugin.archive.model.Conversation;
-import com.reucon.openfire.plugin.archive.model.Participant;
-import com.reucon.openfire.plugin.archive.util.DateUtil;
+import com.reucon.openfire.plugin.archive.util.XmppDateUtil;
 import com.reucon.openfire.plugin.archive.XmppResultSet;
 
 import java.util.List;
-import java.util.Collection;
-import java.util.ArrayList;
 
 /**
  * Message Archiving List Handler.
@@ -31,14 +27,14 @@ public class IQListHandler extends AbstractIQHandler
         JID from = packet.getFrom();
 
         Element listElement = reply.setChildElement("list", NAMESPACE);
-        List<Conversation> conversations = list(packet.getFrom(), listRequest);
+        List<Conversation> conversations = list(from, listRequest);
         XmppResultSet resultSet = listRequest.getResultSet();
 
         if (resultSet == null)
         {
             for (Conversation conversation : conversations)
             {
-                addChatElement(listElement, packet, conversation);
+                addChatElement(listElement, conversation);
             }
         }
         else
@@ -65,7 +61,7 @@ public class IQListHandler extends AbstractIQHandler
                     continue;
                 }
 
-                addChatElement(listElement, packet, conversation);
+                addChatElement(listElement, conversation);
                 num++;
 
                 if (resultSet.getMax() > 0 && num >= resultSet.getMax())
@@ -80,29 +76,15 @@ public class IQListHandler extends AbstractIQHandler
 
     private List<Conversation> list(JID from, ListRequest request)
     {
-        final String[] participants;
-
-        if (request.getWith() == null)
-        {
-            participants = new String[1];
-        }
-        else
-        {
-            participants = new String[2];
-            participants[1] = request.getWith();
-        }
-        participants[0] = from.toBareJID();
-
-        return getPersistenceManager().findConversations(participants, request.getStart(), request.getEnd());
+        return getPersistenceManager().findConversations(request.getStart(), request.getEnd(), from.toBareJID(), request.getWith());
     }
 
-    private Element addChatElement(Element listElement, IQ packet, Conversation conversation)
+    private Element addChatElement(Element listElement, Conversation conversation)
     {
         Element chatElement = listElement.addElement("chat");
-        String with = null;
-        
+
         chatElement.addAttribute("with", conversation.getWithJid());
-        chatElement.addAttribute("start", DateUtil.formatDate(conversation.getStart()));
+        chatElement.addAttribute("start", XmppDateUtil.formatDate(conversation.getStart()));
 
         return chatElement;
     }

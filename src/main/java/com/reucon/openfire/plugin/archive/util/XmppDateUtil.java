@@ -12,7 +12,7 @@ import java.util.Date;
  * Utility class to parse and format dates in UTC that adhere to the DateTime format specified
  * in Jabber Date and Time Profiles.
  */
-public class DateUtil
+public class XmppDateUtil
 {
     private static final DateFormat dateFormat;
 
@@ -22,7 +22,7 @@ public class DateUtil
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
-    private DateUtil()
+    private XmppDateUtil()
     {
 
     }
