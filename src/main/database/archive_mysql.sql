@@ -42,4 +42,13 @@ CREATE TABLE archiveMessages (
   INDEX idx_archiveMessages_time (time)
 );
 
+CREATE TABLE archivePrefItems (
+  prefItemId            BIGINT          NOT NULL,
+  ownerJid              VARCHAR(255)    NOT NULL,
+  saveMode              INTEGER,
+  otrMode               INTEGER,
+  expireTime            BIGINT
+}
+
+
 INSERT INTO jiveVersion (name, version) VALUES ('archive', 2);
