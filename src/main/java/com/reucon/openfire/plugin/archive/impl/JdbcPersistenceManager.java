@@ -349,6 +349,7 @@ public class JdbcPersistenceManager implements PersistenceManager
                 conversations.add(conversation);
             }
 
+            /*
             rs.close();
             pstmt.close();
 
@@ -364,6 +365,7 @@ public class JdbcPersistenceManager implements PersistenceManager
                     conversation.addParticipant(participant);
                 }
             }
+            */
         }
         catch (SQLException sqle)
         {
@@ -404,6 +406,7 @@ public class JdbcPersistenceManager implements PersistenceManager
                 conversations.add(conversation);
             }
 
+            /*
             rs.close();
             pstmt.close();
 
@@ -419,6 +422,7 @@ public class JdbcPersistenceManager implements PersistenceManager
                     conversation.addParticipant(participant);
                 }
             }
+            */
         }
         catch (SQLException sqle)
         {
@@ -484,6 +488,7 @@ public class JdbcPersistenceManager implements PersistenceManager
                 conversations.add(conversation);
             }
 
+            /*
             rs.close();
             pstmt.close();
 
@@ -499,6 +504,7 @@ public class JdbcPersistenceManager implements PersistenceManager
                     conversation.addParticipant(participant);
                 }
             }
+            */
         }
         catch (SQLException sqle)
         {
