@@ -5,6 +5,10 @@ CREATE TABLE archiveConversations (
   ownerJid              VARCHAR(255)    NOT NULL,
   withJid               VARCHAR(255)    NOT NULL,
 );
+CREATE INDEX idx_archiveConversations_startTime ON archiveConversations (startTime);
+CREATE INDEX idx_archiveConversations_endTime ON archiveConversations (endTime);
+CREATE INDEX idx_archiveConversations_ownerJid ON archiveConversations (ownerJid);
+CREATE INDEX idx_archiveConversations_withJid ON archiveConversations (withJid);
 
 CREATE TABLE archiveParticipants (
   participantId         BIGINT          NOT NULL PRIMARY KEY,
@@ -15,6 +19,7 @@ CREATE TABLE archiveParticipants (
   conversationId        BIGINT          NOT NULL
 );
 CREATE INDEX idx_archiveParticipants_conversationId ON archiveParticipants (conversationId);
+CREATE INDEX idx_archiveParticipants_jid ON archiveParticipants (jid);
 
 CREATE TABLE archiveMessages (
   messageId             BIGINT          NOT NULL PRIMARY KEY,
@@ -32,5 +37,6 @@ CREATE TABLE archiveMessages (
   conversationId        BIGINT NOT NULL
 );
 CREATE INDEX idx_archiveMessages_conversationId ON archiveMessages (conversationId);
+CREATE INDEX idx_archiveMessages_time ON archiveMessages (time);
 
 INSERT INTO jiveVersion (name, version) VALUES ('archive', 2);
