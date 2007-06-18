@@ -4,6 +4,8 @@ CREATE TABLE archiveConversations (
   endTime               BIGINT          NOT NULL,
   ownerJid              VARCHAR(255)    NOT NULL,
   withJid               VARCHAR(255)    NOT NULL,
+  subject               VARCHAR(255),
+  thread                VARCHAR(255)
 );
 CREATE INDEX idx_archiveConversations_startTime ON archiveConversations (startTime);
 CREATE INDEX idx_archiveConversations_endTime ON archiveConversations (endTime);
@@ -34,7 +36,7 @@ CREATE TABLE archiveMessages (
   thread                VARCHAR(255),
   subject               VARCHAR(255),
   body                  LONGVARCHAR,
-  conversationId        BIGINT NOT NULL
+  conversationId        BIGINT          NOT NULL
 );
 CREATE INDEX idx_archiveMessages_conversationId ON archiveMessages (conversationId);
 CREATE INDEX idx_archiveMessages_time ON archiveMessages (time);

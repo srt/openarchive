@@ -45,19 +45,19 @@ CREATE TABLE archiveMessages (
 );
 
 CREATE TABLE archivePrefItems (
-  ownerJid              VARCHAR(255)    NOT NULL,
+  username              VARCHAR(64)     NOT NULL,
   jid                   VARCHAR(255),
   saveMode              INTEGER,
   otrMode               INTEGER,
-  expireTime            BIGINT
-  PRIMARY KEY (ownerJid,jid)
-}
+  expireTime            BIGINT,
+  PRIMARY KEY (username,jid)
+);
 
 CREATE TABLE archivePrefMethods (
-  ownerJid              VARCHAR(255)    NOT NULL,
+  username              VARCHAR(64)     NOT NULL,
   method                VARCHAR(255)    NOT NULL,
-  use                   INTEGER,
-  PRIMARY KEY (ownerJid,method)
-}
+  methodUsage           INTEGER,
+  PRIMARY KEY (username,method)
+);
 
 INSERT INTO jiveVersion (name, version) VALUES ('archive', 2);
