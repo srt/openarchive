@@ -55,7 +55,7 @@ CREATE TABLE archivePrefItems (
 
 CREATE TABLE archivePrefMethods (
   username              VARCHAR(64)     NOT NULL,
-  method                VARCHAR(255)    NOT NULL,
+  methodType            VARCHAR(255)    NOT NULL,
   methodUsage           INTEGER,
   PRIMARY KEY (username,method)
 );
