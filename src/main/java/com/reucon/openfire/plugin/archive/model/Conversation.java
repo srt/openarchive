@@ -116,9 +116,9 @@ public class Conversation
         }
     }
 
-    public Collection<ArchivedMessage> getMessages()
+    public List<ArchivedMessage> getMessages()
     {
-        return Collections.unmodifiableCollection(messages);
+        return Collections.unmodifiableList(messages);
     }
 
     public void addMessage(ArchivedMessage message)

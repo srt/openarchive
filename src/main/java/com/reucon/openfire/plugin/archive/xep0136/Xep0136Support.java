@@ -12,6 +12,8 @@ import org.xmpp.packet.PacketError;
 
 import java.util.*;
 
+import com.reucon.openfire.plugin.archive.ArchivePlugin;
+
 /**
  * Encapsulates support for <a href="http://www.xmpp.org/extensions/xep-0136.html">XEP-0136</a>.
  */
@@ -29,6 +31,11 @@ public class Xep0136Support
         this.iqDispatcher = new AbstractIQHandler("XEP-0136 IQ Dispatcher", null) {
             public IQ handleIQ(IQ packet) throws UnauthorizedException
             {
+                if (! ArchivePlugin.getInstance().isEnabled())
+                {
+                    return error(packet, PacketError.Condition.feature_not_implemented);
+                }
+
                 final IQHandler iqHandler = element2Handlers.get(packet.getChildElement().getName());
                 if (iqHandler != null)
                 {

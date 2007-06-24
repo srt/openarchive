@@ -722,7 +722,7 @@ public class JdbcPersistenceManager implements PersistenceManager
             pstmt.close();
 
             pstmt = con.prepareStatement(SELECT_PARTICIPANTS_BY_CONVERSATION);
-            pstmt.setLong(1, conversationId);
+            pstmt.setLong(1, conversation.getId());
 
             rs = pstmt.executeQuery();
             while (rs.next())
@@ -734,7 +734,7 @@ public class JdbcPersistenceManager implements PersistenceManager
             pstmt.close();
 
             pstmt = con.prepareStatement(SELECT_MESSAGES_BY_CONVERSATION);
-            pstmt.setLong(1, conversationId);
+            pstmt.setLong(1, conversation.getId());
 
             rs = pstmt.executeQuery();
             while (rs.next())
