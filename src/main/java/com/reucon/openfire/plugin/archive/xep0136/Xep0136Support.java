@@ -2,14 +2,15 @@ package com.reucon.openfire.plugin.archive.xep0136;
 
 import org.jivesoftware.openfire.IQRouter;
 import org.jivesoftware.openfire.XMPPServer;
+import org.jivesoftware.openfire.auth.UnauthorizedException;
 import org.jivesoftware.openfire.disco.IQDiscoInfoHandler;
 import org.jivesoftware.openfire.disco.ServerFeaturesProvider;
 import org.jivesoftware.openfire.handler.IQHandler;
 import org.jivesoftware.util.Log;
+import org.xmpp.packet.IQ;
+import org.xmpp.packet.PacketError;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * Encapsulates support for <a href="http://www.xmpp.org/extensions/xep-0136.html">XEP-0136</a>.
@@ -17,22 +18,39 @@ import java.util.Iterator;
 public class Xep0136Support
 {
     final XMPPServer server;
+    final Map<String, IQHandler> element2Handlers;
+    final IQHandler iqDispatcher;
     final Collection<IQHandler> iqHandlers;
 
     public Xep0136Support(XMPPServer server)
     {
         this.server = server;
-        this.iqHandlers = new ArrayList<IQHandler>();
-        //iqHandlers.add(new IQPrefHandler());
+        this.element2Handlers = Collections.synchronizedMap(new HashMap<String, IQHandler>());
+        this.iqDispatcher = new AbstractIQHandler("XEP-0136 IQ Dispatcher", null) {
+            public IQ handleIQ(IQ packet) throws UnauthorizedException
+            {
+                final IQHandler iqHandler = element2Handlers.get(packet.getChildElement().getName());
+                if (iqHandler != null)
+                {
+                    return iqHandler.handleIQ(packet);
+                }
+                else
+                {
+                    return error(packet, PacketError.Condition.feature_not_implemented);
+                }
+            }
+        };
+        
+        iqHandlers = new ArrayList<IQHandler>();
+        iqHandlers.add(new IQPrefHandler());
         iqHandlers.add(new IQListHandler());
-        //iqHandlers.add(new IQRetrieveHandler());
+        iqHandlers.add(new IQRetrieveHandler());
     }
 
     public void start()
     {
         for (IQHandler iqHandler : iqHandlers)
         {
-            /*
             try
             {
                 iqHandler.initialize(server);
@@ -43,9 +61,8 @@ public class Xep0136Support
                 Log.error("Unable to initialize and start " + iqHandler.getClass());
                 continue;
             }
-            */
-            server.getIQRouter().addHandler(iqHandler);
 
+            element2Handlers.put(iqHandler.getInfo().getName(), iqHandler);
             if (iqHandler instanceof ServerFeaturesProvider)
             {
                 for (Iterator<String> i = ((ServerFeaturesProvider) iqHandler).getFeatures(); i.hasNext(); )
@@ -54,6 +71,7 @@ public class Xep0136Support
                 }
             }
         }
+        server.getIQRouter().addHandler(iqDispatcher);
     }
 
     public void stop()
@@ -63,10 +81,7 @@ public class Xep0136Support
 
         for (IQHandler iqHandler : iqHandlers)
         {
-            if (iqRouter != null)
-            {
-                iqRouter.removeHandler(iqHandler);
-            }
+            element2Handlers.remove(iqHandler.getInfo().getName());
             try
             {
                 iqHandler.stop();
@@ -87,6 +102,10 @@ public class Xep0136Support
                     }
                 }
             }
+        }
+        if (iqRouter != null)
+        {
+            iqRouter.removeHandler(iqDispatcher);
         }
     }
 }

@@ -21,16 +21,16 @@ public class IQRetrieveHandler extends AbstractIQHandler
 
     public IQ handleIQ(IQ packet) throws UnauthorizedException
     {
-        IQ reply = IQ.createResultIQ(packet);
-        RetrieveRequest retrieveRequest = new RetrieveRequest(packet.getChildElement());
+        final IQ reply = IQ.createResultIQ(packet);
+        final RetrieveRequest retrieveRequest = new RetrieveRequest(packet.getChildElement());
 
-        Conversation conversation = retrieve(packet.getFrom(), retrieveRequest);
+        final Conversation conversation = retrieve(packet.getFrom(), retrieveRequest);
         if (conversation == null)
         {
             return error(packet, PacketError.Condition.item_not_found);
         }
 
-        Element chatElement = reply.setChildElement("chat", NAMESPACE);
+        final Element chatElement = reply.setChildElement("chat", NAMESPACE);
         chatElement.addAttribute("with", conversation.getWithJid());
         chatElement.addAttribute("start", XmppDateUtil.formatDate(conversation.getStart()));
 
