@@ -4,7 +4,6 @@ import org.dom4j.Element;
 import org.jivesoftware.openfire.auth.UnauthorizedException;
 import org.jivesoftware.openfire.disco.ServerFeaturesProvider;
 import org.xmpp.packet.IQ;
-import org.xmpp.packet.JID;
 
 import java.util.ArrayList;
 import java.util.Iterator;

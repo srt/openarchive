@@ -47,19 +47,13 @@ public class IQRetrieveHandler extends AbstractIQHandler
         return getPersistenceManager().getConversation(from.toBareJID(), request.getWith(), request.getStart());
     }
 
-    private Element addMessageElement(Element listElement, Conversation conversation, ArchivedMessage message)
+    private Element addMessageElement(Element parentElement, Conversation conversation, ArchivedMessage message)
     {
-        Element messageElement;
+        final Element messageElement;
+        final long secs;
 
-        if (conversation.getOwnerJid().equals(message.getFrom()))
-        {
-            messageElement = listElement.addElement("to");
-        }
-        else
-        {
-            messageElement = listElement.addElement("from");
-        }
-        long secs = message.getTime().getTime() - conversation.getStart().getTime();
+        secs = message.getTime().getTime() - conversation.getStart().getTime();
+        messageElement = parentElement.addElement(message.getDirection().toString());
         messageElement.addAttribute("secs", Long.toString(secs));
         messageElement.addElement("body").setText(message.getBody());
 

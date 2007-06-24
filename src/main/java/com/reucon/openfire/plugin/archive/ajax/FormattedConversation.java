@@ -11,10 +11,10 @@ import org.xmpp.packet.JID;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.HashMap;
-import java.util.Date;
 
 public class FormattedConversation implements Comparable<FormattedConversation>
 {
@@ -94,15 +94,19 @@ public class FormattedConversation implements Comparable<FormattedConversation>
             sb = new StringBuilder();
             for (ArchivedMessage message : conversation.getMessages())
             {
-                Integer participantIndex = participantIndices.get(message.getFrom());
+                final String from;
+                Integer participantIndex;
+
+                from = message.getDirection() == ArchivedMessage.Direction.to ? conversation.getOwnerJid() : conversation.getWithJid();
+                participantIndex = participantIndices.get(from);
                 if (participantIndex == null)
                 {
                     participantIndex = nextIndex++;
-                    participantIndices.put(message.getFrom(), participantIndex);
+                    participantIndices.put(from, participantIndex);
                 }
                 sb.append("<span class='conversation-participant-").append(participantIndex).append("'>");
                 sb.append("[").append(tf.format(message.getTime())).append("] ");
-                sb.append(resolveJid(message.getFrom()));
+                sb.append(resolveJid(from));
                 sb.append(": </span>");
                 sb.append(EscapeUtil.escapeHtml(message.getBody()));
                 sb.append("<br/>");

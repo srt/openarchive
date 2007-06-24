@@ -3,7 +3,9 @@ CREATE TABLE archiveConversations (
   startTime             BIGINT          NOT NULL,
   endTime               BIGINT          NOT NULL,
   ownerJid              VARCHAR(255)    NOT NULL,
+  ownerResource         VARCHAR(255),
   withJid               VARCHAR(255)    NOT NULL,
+  withResource          VARCHAR(255),
   subject               VARCHAR(255),
   thread                VARCHAR(255),
   PRIMARY KEY (conversationId),
@@ -28,14 +30,8 @@ CREATE TABLE archiveParticipants (
 CREATE TABLE archiveMessages (
   messageId             BIGINT          NOT NULL,
   time                  BIGINT          NOT NULL,
-  originalId            VARCHAR(255),
-  fromJid               VARCHAR(255)    NOT NULL,
-  fromResource          VARCHAR(255),
-  toJid                 VARCHAR(255)    NOT NULL,
-  toResource            VARCHAR(255),
-  peerIpAddress         VARCHAR(255),
+  direction             CHAR(4)         NOT NULL,
   type                  CHAR(15)        NOT NULL,
-  thread                VARCHAR(255),
   subject               VARCHAR(255),
   body                  TEXT,
   conversationId        BIGINT          NOT NULL,
@@ -57,7 +53,7 @@ CREATE TABLE archivePrefMethods (
   username              VARCHAR(64)     NOT NULL,
   methodType            VARCHAR(255)    NOT NULL,
   methodUsage           INTEGER,
-  PRIMARY KEY (username,method)
+  PRIMARY KEY (username,methodType)
 );
 
 INSERT INTO jiveVersion (name, version) VALUES ('archive', 2);

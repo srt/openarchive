@@ -3,10 +3,10 @@ package com.reucon.openfire.plugin.archive.util;
 import org.jivesoftware.util.JiveConstants;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.text.ParseException;
-import java.util.TimeZone;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Utility class to parse and format dates in UTC that adhere to the DateTime format specified

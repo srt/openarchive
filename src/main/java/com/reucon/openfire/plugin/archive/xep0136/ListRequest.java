@@ -1,7 +1,7 @@
 package com.reucon.openfire.plugin.archive.xep0136;
 
 import com.reucon.openfire.plugin.archive.util.XmppDateUtil;
-import com.reucon.openfire.plugin.archive.XmppResultSet;
+import com.reucon.openfire.plugin.archive.xep0059.XmppResultSet;
 import org.dom4j.Element;
 import org.dom4j.QName;
 

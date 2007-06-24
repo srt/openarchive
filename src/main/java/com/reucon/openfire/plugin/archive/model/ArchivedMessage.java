@@ -10,27 +10,30 @@ import java.util.Date;
 @JiveID(501)
 public class ArchivedMessage
 {
+    public enum Direction {
+        /**
+         * A message sent by the owner.
+         */
+        to,
+
+        /**
+         * A message received by the owner.
+         */
+        from
+    }
+
     private Long id;
     private final Date time;
-    private String originalId;
-    private final String from;
-    private final String fromResource;
-    private final String to;
-    private final String toResource;
-    private String peerIpAddress;
+    private final Direction direction;
     private final String type;
-    private String thread;
     private String subject;
     private String body;
     private Conversation conversation;
 
-    public ArchivedMessage(Date time, String from, String fromResource, String to, String toResource, String type)
+    public ArchivedMessage(Date time, Direction direction, String type)
     {
         this.time = time;
-        this.from = from;
-        this.fromResource = fromResource;
-        this.to = to;
-        this.toResource = toResource;
+        this.direction = direction;
         this.type = type;
     }
 
@@ -49,59 +52,14 @@ public class ArchivedMessage
         return time;
     }
 
-    public String getOriginalId()
+    public Direction getDirection()
     {
-        return originalId;
-    }
-
-    public void setOriginalId(String originalId)
-    {
-        this.originalId = originalId;
-    }
-
-    public String getFrom()
-    {
-        return from;
-    }
-
-    public String getFromResource()
-    {
-        return fromResource;
-    }
-
-    public String getTo()
-    {
-        return to;
-    }
-
-    public String getToResource()
-    {
-        return toResource;
-    }
-
-    public String getPeerIpAddress()
-    {
-        return peerIpAddress;
-    }
-
-    public void setPeerIpAddress(String peerIpAddress)
-    {
-        this.peerIpAddress = peerIpAddress;
+        return direction;
     }
 
     public String getType()
     {
         return type;
-    }
-
-    public String getThread()
-    {
-        return thread;
-    }
-
-    public void setThread(String thread)
-    {
-        this.thread = thread;
     }
 
     public String getSubject()
@@ -150,8 +108,7 @@ public class ArchivedMessage
 
         sb.append("ArchivedMessage[id=").append(id).append(",");
         sb.append("time=").append(time).append(",");
-        sb.append("from='").append(from).append("',");
-        sb.append("to='").append(to).append("']");
+        sb.append("direction=").append(direction).append("]");
         
         return sb.toString();
     }

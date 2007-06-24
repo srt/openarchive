@@ -27,8 +27,13 @@ public class Conversation
 
     public Conversation(Date start, String ownerJid, String withJid)
     {
+        this(start, start, ownerJid, withJid);
+    }
+
+    public Conversation(Date start, Date end, String ownerJid, String withJid)
+    {
         this.start = start;
-        this.end = start;
+        this.end = end;
         this.ownerJid = ownerJid;
         this.withJid = withJid;
         participants = new ArrayList<Participant>();

@@ -1,18 +1,19 @@
 package com.reucon.openfire.plugin.archive.impl;
 
-import com.reucon.openfire.plugin.archive.ArchiveManager;
-import com.reucon.openfire.plugin.archive.PersistenceManager;
-import com.reucon.openfire.plugin.archive.IndexManager;
 import com.reucon.openfire.plugin.archive.ArchiveFactory;
+import com.reucon.openfire.plugin.archive.ArchiveManager;
+import com.reucon.openfire.plugin.archive.IndexManager;
+import com.reucon.openfire.plugin.archive.PersistenceManager;
 import com.reucon.openfire.plugin.archive.model.ArchivedMessage;
 import com.reucon.openfire.plugin.archive.model.Conversation;
 import com.reucon.openfire.plugin.archive.model.Participant;
-import org.jivesoftware.openfire.session.Session;
 import org.jivesoftware.openfire.XMPPServer;
-import org.xmpp.packet.Message;
+import org.jivesoftware.openfire.session.Session;
 import org.xmpp.packet.JID;
+import org.xmpp.packet.Message;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Default implementation of ArchiveManager.
@@ -37,13 +38,14 @@ public class ArchiveManagerImpl implements ArchiveManager
     public void archiveMessage(Session session, Message message, boolean incoming)
     {
         final XMPPServer server = XMPPServer.getInstance();
+        final ArchivedMessage.Direction direction;
         final ArchivedMessage archivedMessage;
         final Conversation conversation;
         final JID ownerJid;
         final JID withJid;
 
         // TODO support groupchat
-        if (! (message.getType() == Message.Type.normal || message.getType() == Message.Type.chat))
+        if (! (message.getType() == Message.Type.chat))
         {
             return;
         }
@@ -52,18 +54,20 @@ public class ArchiveManagerImpl implements ArchiveManager
         {
             ownerJid = message.getFrom();
             withJid = message.getTo();
+            direction = ArchivedMessage.Direction.from;
         }
         else if (server.isLocal(message.getTo()) && ! incoming)
         {
             ownerJid = message.getTo();
             withJid = message.getFrom();
+            direction = ArchivedMessage.Direction.to;
         }
         else
         {
             return;
         }
 
-        archivedMessage = ArchiveFactory.createArchivedMessage(session, message);
+        archivedMessage = ArchiveFactory.createArchivedMessage(session, message, direction);
         if (archivedMessage.isEmpty())
         {
             return;
@@ -72,7 +76,7 @@ public class ArchiveManagerImpl implements ArchiveManager
         conversation = determineConversation(ownerJid, withJid, archivedMessage);
         archivedMessage.setConversation(conversation);
 
-        persistenceManager.saveMessage(archivedMessage);
+        persistenceManager.createMessage(archivedMessage);
         if (indexManager != null)
         {
             indexManager.indexObject(archivedMessage);
@@ -117,11 +121,11 @@ public class ArchiveManagerImpl implements ArchiveManager
                 conversation = new Conversation(archivedMessage.getTime(), ownerJid.toBareJID(), withJid.toBareJID());
                 persistenceManager.createConversation(conversation);
 
-                p1 = new Participant(archivedMessage.getTime(), archivedMessage.getFrom());
+                p1 = new Participant(archivedMessage.getTime(), ownerJid.toBareJID());
                 conversation.addParticipant(p1);
                 persistenceManager.createParticipant(p1, conversation.getId());
 
-                p2 = new Participant(archivedMessage.getTime(), archivedMessage.getTo());
+                p2 = new Participant(archivedMessage.getTime(), withJid.toBareJID());
                 conversation.addParticipant(p2);
                 persistenceManager.createParticipant(p2, conversation.getId());
                 activeConversations.add(conversation);

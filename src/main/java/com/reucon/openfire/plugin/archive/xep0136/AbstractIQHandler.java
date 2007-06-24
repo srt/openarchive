@@ -1,13 +1,13 @@
 package com.reucon.openfire.plugin.archive.xep0136;
 
 import com.reucon.openfire.plugin.archive.ArchivePlugin;
-import com.reucon.openfire.plugin.archive.PersistenceManager;
 import com.reucon.openfire.plugin.archive.IndexManager;
+import com.reucon.openfire.plugin.archive.PersistenceManager;
 import org.jivesoftware.openfire.IQHandlerInfo;
 import org.jivesoftware.openfire.handler.IQHandler;
+import org.xmpp.packet.IQ;
 import org.xmpp.packet.Packet;
 import org.xmpp.packet.PacketError;
-import org.xmpp.packet.IQ;
 
 /**
  * Abstract base class for XEP-0136 IQ Handlers.

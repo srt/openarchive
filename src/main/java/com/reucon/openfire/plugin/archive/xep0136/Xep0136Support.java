@@ -1,9 +1,9 @@
 package com.reucon.openfire.plugin.archive.xep0136;
 
-import org.jivesoftware.openfire.XMPPServer;
 import org.jivesoftware.openfire.IQRouter;
-import org.jivesoftware.openfire.disco.ServerFeaturesProvider;
+import org.jivesoftware.openfire.XMPPServer;
 import org.jivesoftware.openfire.disco.IQDiscoInfoHandler;
+import org.jivesoftware.openfire.disco.ServerFeaturesProvider;
 import org.jivesoftware.openfire.handler.IQHandler;
 import org.jivesoftware.util.Log;
 
@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * Encapsulates support for XEP-0136.
+ * Encapsulates support for <a href="http://www.xmpp.org/extensions/xep-0136.html">XEP-0136</a>.
  */
 public class Xep0136Support
 {
@@ -25,6 +25,7 @@ public class Xep0136Support
         this.iqHandlers = new ArrayList<IQHandler>();
         iqHandlers.add(new IQPrefHandler());
         iqHandlers.add(new IQListHandler());
+        iqHandlers.add(new IQRetrieveHandler());
     }
 
     public void start()

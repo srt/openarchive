@@ -1,11 +1,10 @@
-package com.reucon.openfire.plugin.archive;
+package com.reucon.openfire.plugin.archive.xep0059;
 
-import org.dom4j.Element;
-import org.dom4j.QName;
 import org.dom4j.DocumentFactory;
+import org.dom4j.Element;
 
 /**
- * A XEP-0059 result set.
+ * A <a href="http://www.xmpp.org/extensions/xep-0059.html">XEP-0059</a> result set.
  */
 public class XmppResultSet
 {
@@ -29,7 +28,7 @@ public class XmppResultSet
             {
                 this.max = Integer.parseInt(setElement.attributeValue("max"));
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 // swallow
             }
@@ -40,7 +39,7 @@ public class XmppResultSet
             {
                 this.max = Integer.parseInt(setElement.attributeValue("index"));
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 // swallow
             }
@@ -57,31 +56,61 @@ public class XmppResultSet
         return after;
     }
 
+    /**
+     * Returns the index of the first element to return.
+     *
+     * @return the index of the first element to return.
+     */
     public int getIndex()
     {
         return index;
     }
 
+    /**
+     * Returns the maximum number of items to return.
+     *
+     * @return the maximum number of items to return.
+     */
     public int getMax()
     {
         return max;
     }
 
+    /**
+     * Sets the id of the first element returned.
+     *
+     * @param first the id of the first element returned.
+     */
     public void setFirst(String first)
     {
         this.first = first;
     }
 
+    /**
+     * Sets the index of the first element returned.
+     *
+     * @param firstIndex the index of the first element returned.
+     */
     public void setFirstIndex(int firstIndex)
     {
         this.firstIndex = firstIndex;
     }
 
+    /**
+     * Sets the id of the last element returned.
+     *
+     * @param last the id of the last element returned.
+     */
     public void setLast(String last)
     {
         this.last = last;
     }
 
+    /**
+     * Sets the number of elements returned.
+     *
+     * @param count the number of elements returned.
+     */
     public void setCount(int count)
     {
         this.count = count;

@@ -13,7 +13,13 @@ import java.util.List;
  */
 public interface PersistenceManager
 {
-    boolean saveMessage(ArchivedMessage message);
+    /**
+     * Creates a new archived message.
+     *
+     * @param message the message to create.
+     * @return <code>true</code> on success, <code>false</code> otherwise.
+     */
+    boolean createMessage(ArchivedMessage message);
 
     /**
      * Selects all messages and passes each message to the given callback for processing.
@@ -21,10 +27,11 @@ public interface PersistenceManager
      * @param callback callback to process messages.
      * @return number of messages processed.
      */
-    int selectAllMessages(ArchivedMessageConsumer callback);
+    int processAllMessages(ArchivedMessageConsumer callback);
 
     /**
-     * Creates a b
+     * Creates a new conversation.
+     *
      * @param conversation the conversation to create.
      * @return <code>true</code> on success, <code>false</code> otherwise.
      */
@@ -38,6 +45,13 @@ public interface PersistenceManager
      */
     boolean updateConversationEnd(Conversation conversation);
 
+    /**
+     * Adds a new participant to a conversation.
+     *
+     * @param participant    the participant to add.
+     * @param conversationId id of the conversation to add the participant to.
+     * @return <code>true</code> on success, <code>false</code> otherwise.
+     */
     boolean createParticipant(Participant participant, Long conversationId);
 
     List<Conversation> findConversations(String[] participants, Date startDate, Date endDate);
@@ -62,8 +76,8 @@ public interface PersistenceManager
      * Returns the conversation with the given owner, with and start time including participants and messages.
      *
      * @param ownerJid bare jid of the conversation's owner.
-     * @param withJid bare jid of the communication partner.
-     * @param start exact start time
+     * @param withJid  bare jid of the communication partner.
+     * @param start    exact start time
      * @return the matching conversation or <code>null</code> if none matches.
      */
     Conversation getConversation(String ownerJid, String withJid, Date start);

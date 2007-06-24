@@ -1,9 +1,6 @@
 package com.reucon.openfire.plugin.archive.dwr;
 
 import org.directwebremoting.servlet.DwrServlet;
-import org.directwebremoting.impl.StartupUtil;
-import org.directwebremoting.impl.ContainerUtil;
-import org.directwebremoting.Container;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -28,7 +25,7 @@ public class PluginDwrServlet extends DwrServlet
         // Openfire's PluginManager doesn't use the init-params we put into web.xml
         // so we set the parameters here and pass them to DwrServlet's init method.
         initParameters = new Hashtable<String, String>();
-        initParameters.put("debug", "true");
+        //initParameters.put("debug", "true");
         initParameters.put("customConfigurator", PluginDwrConfigurator.class.getName());
     }
 

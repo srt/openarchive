@@ -1,10 +1,11 @@
 package com.reucon.openfire.plugin.archive.impl;
 
+import com.reucon.openfire.plugin.archive.ArchivedMessageConsumer;
 import com.reucon.openfire.plugin.archive.IndexManager;
 import com.reucon.openfire.plugin.archive.PersistenceManager;
-import com.reucon.openfire.plugin.archive.ArchivedMessageConsumer;
 import com.reucon.openfire.plugin.archive.model.ArchivedMessage;
 import com.reucon.openfire.plugin.archive.model.Conversation;
+import com.reucon.openfire.plugin.archive.model.Participant;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.DateTools;
@@ -290,7 +291,7 @@ public class LuceneIndexManager implements IndexManager, Runnable
 
     private int rebuildMessageIndex(final IndexWriter indexWriter)
     {
-        return persistenceManager.selectAllMessages(new ArchivedMessageConsumer()
+        return persistenceManager.processAllMessages(new ArchivedMessageConsumer()
         {
             public boolean consume(ArchivedMessage message)
             {
@@ -473,16 +474,26 @@ public class LuceneIndexManager implements IndexManager, Runnable
         doc = new Document();
         doc.add(new Field(FIELD_DOCTYPE, DOCTYPE_MESSAGE, Field.Store.YES, Field.Index.UN_TOKENIZED));
         doc.add(new Field(FIELD_MESSAGE_ID, message.getId().toString(), Field.Store.YES, Field.Index.NO));
-        if (message.getConversation() != null)
+        doc.add(new Field(FIELD_TIME, dateToString(message.getTime()), Field.Store.YES, Field.Index.UN_TOKENIZED));
+        doc.add(new Field(FIELD_TYPE, message.getType(), Field.Store.YES, Field.Index.UN_TOKENIZED));
+        if (conversation != null)
         {
             doc.add(new Field(FIELD_CONVERSATION_ID, message.getConversation().getId().toString(), Field.Store.YES, Field.Index.NO));
+            doc.add(new Field(FIELD_OWNER_JID, conversation.getOwnerJid(), Field.Store.YES, Field.Index.UN_TOKENIZED));
+            doc.add(new Field(FIELD_WITH_JID, conversation.getWithJid(), Field.Store.YES, Field.Index.UN_TOKENIZED));
+            if (conversation.getParticipants() != null)
+            {
+                for (Participant p : conversation.getParticipants())
+                {
+                    doc.add(new Field(FIELD_PARTICIPANT, p.getJid(), Field.Store.YES, Field.Index.UN_TOKENIZED));
+                }
+            }
+            else
+            {
+                doc.add(new Field(FIELD_PARTICIPANT, conversation.getOwnerJid(), Field.Store.YES, Field.Index.UN_TOKENIZED));
+                doc.add(new Field(FIELD_PARTICIPANT, conversation.getWithJid(), Field.Store.YES, Field.Index.UN_TOKENIZED));
+            }
         }
-        doc.add(new Field(FIELD_TIME, dateToString(message.getTime()), Field.Store.YES, Field.Index.UN_TOKENIZED));
-        doc.add(new Field(FIELD_OWNER_JID, conversation.getOwnerJid(), Field.Store.YES, Field.Index.UN_TOKENIZED));
-        doc.add(new Field(FIELD_WITH_JID, conversation.getWithJid(), Field.Store.YES, Field.Index.UN_TOKENIZED));
-        doc.add(new Field(FIELD_PARTICIPANT, message.getFrom(), Field.Store.YES, Field.Index.UN_TOKENIZED));
-        doc.add(new Field(FIELD_PARTICIPANT, message.getTo(), Field.Store.YES, Field.Index.UN_TOKENIZED));
-        doc.add(new Field(FIELD_TYPE, message.getType(), Field.Store.YES, Field.Index.UN_TOKENIZED));
         if (message.getSubject() != null)
         {
             doc.add(new Field(FIELD_SUBJECT, message.getSubject(), Field.Store.YES, Field.Index.TOKENIZED));

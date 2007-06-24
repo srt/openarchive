@@ -1,12 +1,12 @@
 package com.reucon.openfire.plugin.archive.xep0136;
 
+import com.reucon.openfire.plugin.archive.model.Conversation;
+import com.reucon.openfire.plugin.archive.util.XmppDateUtil;
+import com.reucon.openfire.plugin.archive.xep0059.XmppResultSet;
+import org.dom4j.Element;
 import org.jivesoftware.openfire.auth.UnauthorizedException;
 import org.xmpp.packet.IQ;
 import org.xmpp.packet.JID;
-import org.dom4j.Element;
-import com.reucon.openfire.plugin.archive.model.Conversation;
-import com.reucon.openfire.plugin.archive.util.XmppDateUtil;
-import com.reucon.openfire.plugin.archive.XmppResultSet;
 
 import java.util.List;
 
