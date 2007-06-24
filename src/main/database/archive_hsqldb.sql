@@ -3,7 +3,9 @@ CREATE TABLE archiveConversations (
   startTime             BIGINT          NOT NULL,
   endTime               BIGINT          NOT NULL,
   ownerJid              VARCHAR(255)    NOT NULL,
+  ownerResource         VARCHAR(255),
   withJid               VARCHAR(255)    NOT NULL,
+  withResource          VARCHAR(255),
   subject               VARCHAR(255),
   thread                VARCHAR(255)
 );
@@ -26,14 +28,8 @@ CREATE INDEX idx_archiveParticipants_jid ON archiveParticipants (jid);
 CREATE TABLE archiveMessages (
   messageId             BIGINT          NOT NULL PRIMARY KEY,
   time                  BIGINT          NOT NULL,
-  originalId            VARCHAR(255),
-  fromJid               VARCHAR(255)    NOT NULL,
-  fromResource          VARCHAR(255),
-  toJid                 VARCHAR(255)    NOT NULL,
-  toResource            VARCHAR(255),
-  peerIpAddress         VARCHAR(255),
+  direction             CHAR(4)         NOT NULL,
   type                  CHAR(15)        NOT NULL,
-  thread                VARCHAR(255),
   subject               VARCHAR(255),
   body                  LONGVARCHAR,
   conversationId        BIGINT          NOT NULL
