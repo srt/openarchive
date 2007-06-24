@@ -49,7 +49,7 @@ public class Xep0136Support
         };
         
         iqHandlers = new ArrayList<IQHandler>();
-        iqHandlers.add(new IQPrefHandler());
+        //iqHandlers.add(new IQPrefHandler());
         iqHandlers.add(new IQListHandler());
         iqHandlers.add(new IQRetrieveHandler());
     }
