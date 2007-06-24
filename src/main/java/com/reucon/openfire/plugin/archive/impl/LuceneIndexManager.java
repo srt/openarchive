@@ -481,7 +481,7 @@ public class LuceneIndexManager implements IndexManager, Runnable
             doc.add(new Field(FIELD_CONVERSATION_ID, message.getConversation().getId().toString(), Field.Store.YES, Field.Index.NO));
             doc.add(new Field(FIELD_OWNER_JID, conversation.getOwnerJid(), Field.Store.YES, Field.Index.UN_TOKENIZED));
             doc.add(new Field(FIELD_WITH_JID, conversation.getWithJid(), Field.Store.YES, Field.Index.UN_TOKENIZED));
-            if (conversation.getParticipants() != null)
+            if (conversation.getParticipants() != null && ! conversation.getParticipants().isEmpty())
             {
                 for (Participant p : conversation.getParticipants())
                 {
