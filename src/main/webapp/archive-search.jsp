@@ -196,7 +196,7 @@
                         </tr>
                         <tr valign="top">
                             <td>
-                                <fmt:message key="archive.search.start"/>
+                                <label for="startDate"><fmt:message key="archive.search.start"/></label>
                             </td>
                             <td>
                                 <input type="text" id="startDate" name="startDate" size="10" value="" onfocus="return enableDateFields()"/><br/>
@@ -220,7 +220,7 @@
                         </tr>
                         <tr valign="top">
                             <td>
-                                <fmt:message key="archive.search.end"/>
+                                <label for="endDate"><fmt:message key="archive.search.end"/></label>
                             </td>
                             <td>
                                 <input type="text" id="endDate" name="endDate" size="10" value="" onfocus="return enableDateFields()"/><br/>
