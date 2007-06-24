@@ -9,35 +9,55 @@ import org.dom4j.Element;
 public class XmppResultSet
 {
     public static String NAMESPACE = "http://jabber.org/protocol/rsm";
-    private String before;
-    private String after;
-    private int index = -1;
-    private int max = -1;
-    private String first;
-    private int firstIndex = -1;
-    private String last;
-    private int count = -1;
+    private Long after;
+    private Long before;
+    private Integer index;
+    private Integer max;
+    private Long first;
+    private Integer firstIndex;
+    private Long last;
+    private Integer count;
 
     public XmppResultSet(Element setElement)
     {
-        this.before = setElement.attributeValue("before");
-        this.after = setElement.attributeValue("after");
-        if (setElement.attribute("max") != null)
+        if (setElement.element("after") != null)
         {
             try
             {
-                this.max = Integer.parseInt(setElement.attributeValue("max"));
+                this.after = Long.parseLong(setElement.elementText("after"));
             }
             catch (Exception e)
             {
                 // swallow
             }
         }
-        if (setElement.attribute("index") != null)
+        if (setElement.element("before") != null)
         {
             try
             {
-                this.max = Integer.parseInt(setElement.attributeValue("index"));
+                this.before = Long.parseLong(setElement.elementText("before"));
+            }
+            catch (Exception e)
+            {
+                // swallow
+            }
+        }
+        if (setElement.element("max") != null)
+        {
+            try
+            {
+                this.max = Integer.parseInt(setElement.elementText("max"));
+            }
+            catch (Exception e)
+            {
+                // swallow
+            }
+        }
+        if (setElement.element("index") != null)
+        {
+            try
+            {
+                this.index = Integer.parseInt(setElement.elementText("index"));
             }
             catch (Exception e)
             {
@@ -46,14 +66,14 @@ public class XmppResultSet
         }
     }
 
-    public String getBefore()
-    {
-        return before;
-    }
-
-    public String getAfter()
+    public Long getAfter()
     {
         return after;
+    }
+
+    public Long getBefore()
+    {
+        return before;
     }
 
     /**
@@ -61,7 +81,7 @@ public class XmppResultSet
      *
      * @return the index of the first element to return.
      */
-    public int getIndex()
+    public Integer getIndex()
     {
         return index;
     }
@@ -71,7 +91,7 @@ public class XmppResultSet
      *
      * @return the maximum number of items to return.
      */
-    public int getMax()
+    public Integer getMax()
     {
         return max;
     }
@@ -81,7 +101,7 @@ public class XmppResultSet
      *
      * @param first the id of the first element returned.
      */
-    public void setFirst(String first)
+    public void setFirst(Long first)
     {
         this.first = first;
     }
@@ -91,7 +111,7 @@ public class XmppResultSet
      *
      * @param firstIndex the index of the first element returned.
      */
-    public void setFirstIndex(int firstIndex)
+    public void setFirstIndex(Integer firstIndex)
     {
         this.firstIndex = firstIndex;
     }
@@ -101,7 +121,7 @@ public class XmppResultSet
      *
      * @param last the id of the last element returned.
      */
-    public void setLast(String last)
+    public void setLast(Long last)
     {
         this.last = last;
     }
@@ -111,7 +131,7 @@ public class XmppResultSet
      *
      * @param count the number of elements returned.
      */
-    public void setCount(int count)
+    public void setCount(Integer count)
     {
         this.count = count;
     }
@@ -121,25 +141,23 @@ public class XmppResultSet
         final Element set;
 
         set = DocumentFactory.getInstance().createElement("set", NAMESPACE);
-        if (first != null || firstIndex != -1)
+        if (first != null)
         {
-            final Element firstElement = set.addElement("first");
-            if (first != null)
+            final Element firstElement;
+            firstElement = set.addElement("first");
+            firstElement.setText(first.toString());
+            if (firstIndex != null)
             {
-                firstElement.setText(first);
-            }
-            if (firstIndex != -1)
-            {
-                firstElement.addAttribute("index", Integer.toString(firstIndex));
+                firstElement.addAttribute("index", firstIndex.toString());
             }
         }
         if (last != null)
         {
-            set.addElement("last").setText(last);
+            set.addElement("last").setText(last.toString());
         }
-        if (count != -1)
+        if (count != null)
         {
-            set.addElement("count").setText(Integer.toString(count));
+            set.addElement("count").setText(count.toString());
         }
 
         return set;

@@ -23,15 +23,16 @@ public class Xep0136Support
     {
         this.server = server;
         this.iqHandlers = new ArrayList<IQHandler>();
-        iqHandlers.add(new IQPrefHandler());
+        //iqHandlers.add(new IQPrefHandler());
         iqHandlers.add(new IQListHandler());
-        iqHandlers.add(new IQRetrieveHandler());
+        //iqHandlers.add(new IQRetrieveHandler());
     }
 
     public void start()
     {
         for (IQHandler iqHandler : iqHandlers)
         {
+            /*
             try
             {
                 iqHandler.initialize(server);
@@ -42,6 +43,7 @@ public class Xep0136Support
                 Log.error("Unable to initialize and start " + iqHandler.getClass());
                 continue;
             }
+            */
             server.getIQRouter().addHandler(iqHandler);
 
             if (iqHandler instanceof ServerFeaturesProvider)

@@ -2,6 +2,7 @@ package com.reucon.openfire.plugin.archive.impl;
 
 import com.reucon.openfire.plugin.archive.ArchivedMessageConsumer;
 import com.reucon.openfire.plugin.archive.PersistenceManager;
+import com.reucon.openfire.plugin.archive.xep0059.XmppResultSet;
 import com.reucon.openfire.plugin.archive.model.ArchivedMessage;
 import com.reucon.openfire.plugin.archive.model.Conversation;
 import com.reucon.openfire.plugin.archive.model.Participant;
@@ -20,6 +21,8 @@ import java.util.List;
  */
 public class JdbcPersistenceManager implements PersistenceManager
 {
+    public static final int DEFAULT_MAX = 1000;
+    
     public static final String CREATE_MESSAGE =
             "INSERT INTO archiveMessages (messageId,time,direction,type,subject,body,conversationId) " +
                     "VALUES (?,?,?,?,?,?,?)";
@@ -47,6 +50,8 @@ public class JdbcPersistenceManager implements PersistenceManager
             "SELECT c.conversationId,c.startTime,c.endTime,c.ownerJid,c.ownerResource,c.withJid,c.withResource," +
                     " c.subject,c.thread " +
                     "FROM archiveConversations AS c";
+    public static final String COUNT_CONVERSATIONS =
+            "SELECT count(*) FROM archiveConversations AS c";
     public static final String CONVERSATION_ID = "c.conversationId";
     public static final String CONVERSATION_START_TIME = "c.startTime";
     public static final String CONVERSATION_END_TIME = "c.endTime";
@@ -254,97 +259,6 @@ public class JdbcPersistenceManager implements PersistenceManager
         }
     }
 
-    public List<Conversation> findConversations(Date startDate, Date endDate, String ownerJid, String withJid)
-    {
-        final List<Conversation> conversations;
-        final StringBuilder querySB;
-        final StringBuilder whereSB;
-        int parameterIndex;
-
-        conversations = new ArrayList<Conversation>();
-
-        querySB = new StringBuilder(SELECT_CONVERSATIONS);
-        whereSB = new StringBuilder();
-
-        if (startDate != null)
-        {
-            if (whereSB.length() != 0)
-            {
-                whereSB.append(" AND ");
-            }
-            whereSB.append(CONVERSATION_START_TIME).append(" >= ?");
-        }
-        if (endDate != null)
-        {
-            if (whereSB.length() != 0)
-            {
-                whereSB.append(" AND ");
-            }
-            whereSB.append(CONVERSATION_END_TIME).append(" <= ?");
-        }
-        if (ownerJid != null)
-        {
-            if (whereSB.length() != 0)
-            {
-                whereSB.append(" AND ");
-            }
-            whereSB.append(CONVERSATION_OWNER_JID).append(" = ?");
-        }
-        if (withJid != null)
-        {
-            if (whereSB.length() != 0)
-            {
-                whereSB.append(" AND ");
-            }
-            whereSB.append(CONVERSATION_WITH_JID).append(" = ?");
-        }
-        querySB.append(" WHERE ").append(whereSB);
-        querySB.append(" ORDER BY ").append(CONVERSATION_START_TIME);
-
-        Connection con = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        try
-        {
-            con = DbConnectionManager.getConnection();
-            pstmt = con.prepareStatement(querySB.toString());
-
-            parameterIndex = 1;
-            if (startDate != null)
-            {
-                pstmt.setLong(parameterIndex++, dateToMillis(startDate));
-            }
-            if (endDate != null)
-            {
-                pstmt.setLong(parameterIndex++, dateToMillis(endDate));
-            }
-            if (ownerJid != null)
-            {
-                pstmt.setString(parameterIndex++, ownerJid);
-            }
-            if (withJid != null)
-            {
-                pstmt.setString(parameterIndex++, withJid);
-            }
-
-            rs = pstmt.executeQuery();
-            while (rs.next())
-            {
-                conversations.add(extractConversation(rs));
-            }
-        }
-        catch (SQLException sqle)
-        {
-            Log.error("Error selecting conversations", sqle);
-        }
-        finally
-        {
-            DbConnectionManager.closeConnection(rs, pstmt, con);
-        }
-
-        return conversations;
-    }
-
     public List<Conversation> findConversations(String[] participants, Date startDate, Date endDate)
     {
         final List<Conversation> conversations;
@@ -433,6 +347,224 @@ public class JdbcPersistenceManager implements PersistenceManager
         }
 
         return conversations;
+    }
+
+    public List<Conversation> findConversations(Date startDate, Date endDate, String ownerJid, String withJid, XmppResultSet xmppResultSet)
+    {
+        final List<Conversation> conversations;
+        final StringBuilder querySB;
+        final StringBuilder whereSB;
+        final StringBuilder limitSB;
+
+        conversations = new ArrayList<Conversation>();
+
+        querySB = new StringBuilder(SELECT_CONVERSATIONS);
+        whereSB = new StringBuilder();
+        limitSB = new StringBuilder();
+
+        if (startDate != null)
+        {
+            appendWhere(whereSB, CONVERSATION_START_TIME, " >= ?");
+        }
+        if (endDate != null)
+        {
+            appendWhere(whereSB, CONVERSATION_END_TIME, " <= ?");
+        }
+        if (ownerJid != null)
+        {
+            appendWhere(whereSB, CONVERSATION_OWNER_JID, " = ?");
+        }
+        if (withJid != null)
+        {
+            appendWhere(whereSB, CONVERSATION_WITH_JID, " = ?");
+        }
+
+        if (xmppResultSet != null)
+        {
+            Integer firstIndex = null;
+            int max = xmppResultSet.getMax() != null ? xmppResultSet.getMax() : DEFAULT_MAX;
+            
+            xmppResultSet.setCount(countConversations(startDate, endDate, ownerJid, withJid, whereSB.toString()));
+            if (xmppResultSet.getIndex() != null)
+            {
+                firstIndex = xmppResultSet.getIndex();
+            }
+            else if (xmppResultSet.getAfter() != null)
+            {
+                firstIndex = countConversationsBefore(startDate, endDate, ownerJid, withJid, xmppResultSet.getAfter(), whereSB.toString());
+                firstIndex += 1;
+            }
+            else if (xmppResultSet.getBefore() != null)
+            {
+                firstIndex = countConversationsBefore(startDate, endDate, ownerJid, withJid, xmppResultSet.getBefore(), whereSB.toString());
+                firstIndex -= max;
+                if (firstIndex < 0)
+                {
+                    firstIndex = 0;
+                }
+            }
+            firstIndex = firstIndex != null ? firstIndex : 0;
+
+            limitSB.append(" LIMIT ").append(max);
+            limitSB.append(" OFFSET ").append(firstIndex);
+            xmppResultSet.setFirstIndex(firstIndex);
+        }
+
+        if (whereSB.length() != 0)
+        {
+            querySB.append(" WHERE ").append(whereSB);
+        }
+        querySB.append(" ORDER BY ").append(CONVERSATION_ID);
+        querySB.append(limitSB);
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try
+        {
+            con = DbConnectionManager.getConnection();
+            pstmt = con.prepareStatement(querySB.toString());
+            bindConversationParameters(startDate, endDate, ownerJid, withJid, pstmt);
+            rs = pstmt.executeQuery();
+            while (rs.next())
+            {
+                conversations.add(extractConversation(rs));
+            }
+        }
+        catch (SQLException sqle)
+        {
+            Log.error("Error selecting conversations", sqle);
+        }
+        finally
+        {
+            DbConnectionManager.closeConnection(rs, pstmt, con);
+        }
+
+        if (xmppResultSet != null && conversations.size() > 0)
+        {
+            xmppResultSet.setFirst(conversations.get(0).getId());
+            xmppResultSet.setLast(conversations.get(conversations.size() - 1).getId());
+        }
+        return conversations;
+    }
+
+    private void appendWhere(StringBuilder sb, String... fragments)
+    {
+        if (sb.length() != 0)
+        {
+            sb.append(" AND ");
+        }
+
+        for (String fragment : fragments)
+        {
+            sb.append(fragment);
+        }
+    }
+
+    private int countConversations(Date startDate, Date endDate, String ownerJid, String withJid, String whereClause)
+    {
+        StringBuilder querySB;
+
+        querySB = new StringBuilder(COUNT_CONVERSATIONS);
+        if (whereClause != null && whereClause.length() != 0)
+        {
+            querySB.append(" WHERE ").append(whereClause);
+        }
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try
+        {
+            con = DbConnectionManager.getConnection();
+            pstmt = con.prepareStatement(querySB.toString());
+            bindConversationParameters(startDate, endDate, ownerJid, withJid, pstmt);
+            rs = pstmt.executeQuery();
+            if (rs.next())
+            {
+                return rs.getInt(1);
+            }
+            else
+            {
+                return 0;
+            }
+        }
+        catch (SQLException sqle)
+        {
+            Log.error("Error counting conversations", sqle);
+            return 0;
+        }
+        finally
+        {
+            DbConnectionManager.closeConnection(rs, pstmt, con);
+        }
+    }
+
+    private int countConversationsBefore(Date startDate, Date endDate, String ownerJid, String withJid, Long before, String whereClause)
+    {
+        StringBuilder querySB;
+
+        querySB = new StringBuilder(COUNT_CONVERSATIONS);
+        querySB.append(" WHERE ");
+        if (whereClause != null && whereClause.length() != 0)
+        {
+            querySB.append(whereClause);
+            querySB.append(" AND ");
+        }
+        querySB.append(CONVERSATION_ID).append(" < ?");
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try
+        {
+            int parameterIndex;
+            con = DbConnectionManager.getConnection();
+            pstmt = con.prepareStatement(querySB.toString());
+            parameterIndex = bindConversationParameters(startDate, endDate, ownerJid, withJid, pstmt);
+            pstmt.setLong(parameterIndex, before);
+            rs = pstmt.executeQuery();
+            if (rs.next())
+            {
+                return rs.getInt(1);
+            }
+            else
+            {
+                return 0;
+            }
+        }
+        catch (SQLException sqle)
+        {
+            Log.error("Error counting conversations", sqle);
+            return 0;
+        }
+        finally
+        {
+            DbConnectionManager.closeConnection(rs, pstmt, con);
+        }
+    }
+
+    private int bindConversationParameters(Date startDate, Date endDate, String ownerJid, String withJid, PreparedStatement pstmt) throws SQLException
+    {
+        int parameterIndex = 1;
+
+        if (startDate != null)
+        {
+            pstmt.setLong(parameterIndex++, dateToMillis(startDate));
+        }
+        if (endDate != null)
+        {
+            pstmt.setLong(parameterIndex++, dateToMillis(endDate));
+        }
+        if (ownerJid != null)
+        {
+            pstmt.setString(parameterIndex++, ownerJid);
+        }
+        if (withJid != null)
+        {
+            pstmt.setString(parameterIndex++, withJid);
+        }
+        return parameterIndex;
     }
 
     public Collection<Conversation> getActiveConversations(int conversationTimeout)

@@ -3,6 +3,7 @@ package com.reucon.openfire.plugin.archive;
 import com.reucon.openfire.plugin.archive.model.ArchivedMessage;
 import com.reucon.openfire.plugin.archive.model.Conversation;
 import com.reucon.openfire.plugin.archive.model.Participant;
+import com.reucon.openfire.plugin.archive.xep0059.XmppResultSet;
 
 import java.util.Collection;
 import java.util.Date;
@@ -66,7 +67,7 @@ public interface PersistenceManager
      *                  the jid of another XMPP user or the jid of a group chat.
      * @return the conversations that matched search critera without messages and participants.
      */
-    List<Conversation> findConversations(Date startDate, Date endDate, String owner, String with);
+    List<Conversation> findConversations(Date startDate, Date endDate, String owner, String with, XmppResultSet xmppResultSet);
 
     Collection<Conversation> getActiveConversations(int conversationTimeout);
 

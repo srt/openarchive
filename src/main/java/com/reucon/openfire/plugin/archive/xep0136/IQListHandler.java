@@ -30,45 +30,14 @@ public class IQListHandler extends AbstractIQHandler
         List<Conversation> conversations = list(from, listRequest);
         XmppResultSet resultSet = listRequest.getResultSet();
 
-        if (resultSet == null)
+        for (Conversation conversation : conversations)
         {
-            for (Conversation conversation : conversations)
-            {
-                addChatElement(listElement, conversation);
-            }
+            addChatElement(listElement, conversation);
         }
-        else
+
+        if (resultSet != null)
         {
-            int start = resultSet.getIndex() < 0 ? 0 : resultSet.getIndex();
-            boolean skip = false;
-            int num = 0;
-
-            if (resultSet.getAfter() != null)
-            {
-                skip = true;
-            }
-
-            for (int i = start; i < conversations.size(); i++)
-            {
-                Conversation conversation = conversations.get(i);
-
-                if (skip)
-                {
-                    if (resultSet.getAfter() != null && resultSet.getAfter().equals(conversation.getId()))
-                    {
-                        skip = false;
-                    }
-                    continue;
-                }
-
-                addChatElement(listElement, conversation);
-                num++;
-
-                if (resultSet.getMax() > 0 && num >= resultSet.getMax())
-                {
-                    break;
-                }
-            }
+            listElement.add(resultSet.createResultElement());
         }
 
         return reply;
@@ -76,7 +45,8 @@ public class IQListHandler extends AbstractIQHandler
 
     private List<Conversation> list(JID from, ListRequest request)
     {
-        return getPersistenceManager().findConversations(request.getStart(), request.getEnd(), from.toBareJID(), request.getWith());
+        return getPersistenceManager().findConversations(request.getStart(), request.getEnd(),
+                from.toBareJID(), request.getWith(), request.getResultSet());
     }
 
     private Element addChatElement(Element listElement, Conversation conversation)
