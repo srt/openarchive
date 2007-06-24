@@ -14,28 +14,31 @@ public class Conversation
     private final Date start;
     private Date end;
     private final String ownerJid;
+    private final String ownerResource;
     private final String withJid;
+    private final String withResource;
+    private String subject;
+    private final String thread;
     private final List<Participant> participants;
     private final List<ArchivedMessage> messages;
 
-
-    public Conversation(Long id)
+    public Conversation(Date start, String ownerJid, String ownerResource, String withJid, String withResource,
+                        String subject, String thread)
     {
-        this(null, null, null);
-        this.id = id;
+        this(start, start, ownerJid, ownerResource, withJid, withResource, subject, thread);
     }
 
-    public Conversation(Date start, String ownerJid, String withJid)
-    {
-        this(start, start, ownerJid, withJid);
-    }
-
-    public Conversation(Date start, Date end, String ownerJid, String withJid)
+    public Conversation(Date start, Date end, String ownerJid, String ownerResource, String withJid, String withResource,
+                        String subject, String thread)
     {
         this.start = start;
         this.end = end;
         this.ownerJid = ownerJid;
+        this.ownerResource = ownerResource;
         this.withJid = withJid;
+        this.withResource = withResource;
+        this.subject = subject;
+        this.thread = thread;
         participants = new ArrayList<Participant>();
         messages = new ArrayList<ArchivedMessage>();
     }
@@ -70,9 +73,34 @@ public class Conversation
         return ownerJid;
     }
 
+    public String getOwnerResource()
+    {
+        return ownerResource;
+    }
+
     public String getWithJid()
     {
         return withJid;
+    }
+
+    public String getWithResource()
+    {
+        return withResource;
+    }
+
+    public String getSubject()
+    {
+        return subject;
+    }
+
+    public void setSubject(String subject)
+    {
+        this.subject = subject;
+    }
+
+    public String getThread()
+    {
+        return thread;
     }
 
     public Collection<Participant> getParticipants()
@@ -82,7 +110,7 @@ public class Conversation
 
     public void addParticipant(Participant participant)
     {
-        synchronized(participants)
+        synchronized (participants)
         {
             participants.add(participant);
         }
@@ -95,7 +123,7 @@ public class Conversation
 
     public void addMessage(ArchivedMessage message)
     {
-        synchronized(messages)
+        synchronized (messages)
         {
             messages.add(message);
         }

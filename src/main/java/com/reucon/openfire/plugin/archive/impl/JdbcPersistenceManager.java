@@ -36,14 +36,17 @@ public class JdbcPersistenceManager implements PersistenceManager
                     "FROM archiveMessages WHERE conversationId = ? ORDER BY time";
 
     public static final String CREATE_CONVERSATION =
-            "INSERT INTO archiveConversations (conversationId,startTime,endTime,ownerJid,withJid) " +
-                    "VALUES (?,?,?,?,?)";
+            "INSERT INTO archiveConversations (conversationId,startTime,endTime,ownerJid,ownerResource," +
+                    " withJid,withResource,subject,thread) " +
+                    "VALUES (?,?,?,?,?,?,?,?,?)";
 
     public static final String UPDATE_CONVERSATION_END =
             "UPDATE archiveConversations SET endTime = ? WHERE conversationId = ?";
 
     public static final String SELECT_CONVERSATIONS =
-            "SELECT c.conversationId,c.startTime,c.endTime,c.ownerJid,c.withJid FROM archiveConversations AS c";
+            "SELECT c.conversationId,c.startTime,c.endTime,c.ownerJid,c.ownerResource,c.withJid,c.withResource," +
+                    " c.subject,c.thread " +
+                    "FROM archiveConversations AS c";
     public static final String CONVERSATION_ID = "c.conversationId";
     public static final String CONVERSATION_START_TIME = "c.startTime";
     public static final String CONVERSATION_END_TIME = "c.endTime";
@@ -51,7 +54,9 @@ public class JdbcPersistenceManager implements PersistenceManager
     public static final String CONVERSATION_WITH_JID = "c.withJid";
 
     public static final String SELECT_ACTIVE_CONVERSATIONS =
-            "SELECT conversationId,startTime,endTime,ownerJid,withJid FROM archiveConversations WHERE endTime > ?";
+            "SELECT c.conversationId,c.startTime,c.endTime,c.ownerJid,c.ownerResource,withJid,c.withResource," +
+                    " c.subject,c.thread " +
+                    "FROM archiveConversations AS c WHERE c.endTime > ?";
 
     public static final String ADD_PARTICIPANT =
             "INSERT INTO archiveParticipants (participantId,startTime,endTime,jid,conversationId) " +
@@ -116,8 +121,10 @@ public class JdbcPersistenceManager implements PersistenceManager
                 conversationId = rs.getLong(7);
                 if (conversation == null || !conversation.getId().equals(conversationId))
                 {
-                    conversation = new Conversation(millisToDate(rs.getLong(8)), millisToDate(rs.getLong(9)),
-                            rs.getString(10), rs.getString(11));
+                    conversation = new Conversation(
+                            millisToDate(rs.getLong(8)), millisToDate(rs.getLong(9)),
+                            rs.getString(10), rs.getString(11), rs.getString(12), rs.getString(13),
+                            rs.getString(14), rs.getString(15));
                     conversation.setId(conversationId);
                 }
                 message.setConversation(conversation);
@@ -162,7 +169,11 @@ public class JdbcPersistenceManager implements PersistenceManager
             pstmt.setLong(2, dateToMillis(conversation.getStart()));
             pstmt.setLong(3, dateToMillis(conversation.getEnd()));
             pstmt.setString(4, conversation.getOwnerJid());
-            pstmt.setString(5, conversation.getWithJid());
+            pstmt.setString(5, conversation.getOwnerResource());
+            pstmt.setString(6, conversation.getWithJid());
+            pstmt.setString(7, conversation.getWithResource());
+            pstmt.setString(8, conversation.getSubject());
+            pstmt.setString(9, conversation.getThread());
             pstmt.executeUpdate();
 
             conversation.setId(id);
@@ -619,10 +630,13 @@ public class JdbcPersistenceManager implements PersistenceManager
             throws SQLException
     {
         final Conversation conversation;
+        final long id;
 
-        conversation = new Conversation(millisToDate(rs.getLong(2)), rs.getString(4), rs.getString(5));
-        conversation.setId(rs.getLong(1));
-        conversation.setEnd(millisToDate(rs.getLong(3)));
+        id = rs.getLong(1);
+        conversation = new Conversation(millisToDate(rs.getLong(2)), millisToDate(rs.getLong(3)),
+                rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7),
+                rs.getString(8), rs.getString(9));
+        conversation.setId(id);
         return conversation;
     }
 

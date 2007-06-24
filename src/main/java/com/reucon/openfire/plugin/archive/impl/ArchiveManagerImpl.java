@@ -73,7 +73,7 @@ public class ArchiveManagerImpl implements ArchiveManager
             return;
         }
 
-        conversation = determineConversation(ownerJid, withJid, archivedMessage);
+        conversation = determineConversation(ownerJid, withJid, message.getSubject(), message.getThread(), archivedMessage);
         archivedMessage.setConversation(conversation);
 
         persistenceManager.createMessage(archivedMessage);
@@ -88,7 +88,7 @@ public class ArchiveManagerImpl implements ArchiveManager
         this.conversationTimeout = conversationTimeout;
     }
 
-    private Conversation determineConversation(JID ownerJid, JID withJid, ArchivedMessage archivedMessage)
+    private Conversation determineConversation(JID ownerJid, JID withJid, String subject, String thread, ArchivedMessage archivedMessage)
     {
         Conversation conversation = null;
         Collection<Conversation> staleConversations;
@@ -104,7 +104,7 @@ public class ArchiveManagerImpl implements ArchiveManager
                     continue;
                 }
 
-                if (ownerJid.toBareJID().equals(c.getOwnerJid()) && withJid.toBareJID().equals(c.getWithJid()))
+                if (matches(ownerJid, withJid, thread, c))
                 {
                     conversation = c;
                     break;
@@ -118,7 +118,9 @@ public class ArchiveManagerImpl implements ArchiveManager
                 final Participant p1;
                 final Participant p2;
 
-                conversation = new Conversation(archivedMessage.getTime(), ownerJid.toBareJID(), withJid.toBareJID());
+                conversation = new Conversation(archivedMessage.getTime(),
+                        ownerJid.toBareJID(), ownerJid.getResource(), withJid.toBareJID(), withJid.getResource(),
+                        subject, thread);
                 persistenceManager.createConversation(conversation);
 
                 p1 = new Participant(archivedMessage.getTime(), ownerJid.toBareJID());
@@ -138,5 +140,63 @@ public class ArchiveManagerImpl implements ArchiveManager
         }
 
         return conversation;
+    }
+
+    private boolean matches(JID ownerJid, JID withJid, String thread, Conversation c)
+    {
+        if (! ownerJid.toBareJID().equals(c.getOwnerJid()))
+        {
+            return false;
+        }
+        if (ownerJid.getResource() != null)
+        {
+            if (! ownerJid.getResource().equals(c.getOwnerResource()))
+            {
+                return false;
+            }
+        }
+        else
+        {
+            if (c.getOwnerResource() != null)
+            {
+                return false;
+            }
+        }
+
+        if (! withJid.toBareJID().equals(c.getWithJid()))
+        {
+            return false;
+        }
+        if (withJid.getResource() != null)
+        {
+            if (! withJid.getResource().equals(c.getWithResource()))
+            {
+                return false;
+            }
+        }
+        else
+        {
+            if (c.getWithResource() != null)
+            {
+                return false;
+            }
+        }
+
+        if (thread != null)
+        {
+            if (! thread.equals(c.getThread()))
+            {
+                return false;
+            }
+        }
+        else
+        {
+            if (c.getThread() != null)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
