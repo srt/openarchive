@@ -29,7 +29,8 @@ public class JdbcPersistenceManager implements PersistenceManager
 
     public static final String SELECT_ALL_MESSAGES =
             "SELECT m.messageId,m.time,m.direction,m.type,m.subject,m.body," +
-                    " c.conversationId,c.startTime,c.endTime,c.ownerJid,c.withJid " +
+                    " c.conversationId,c.startTime,c.endTime," +
+                    " c.ownerJid,c.ownerResource,c.withJid,c.withResource,c.subject,c.thread " +
                     "FROM archiveMessages AS m, archiveConversations AS c " +
                     "WHERE m.conversationId = c.conversationId " +
                     "ORDER BY c.conversationId";
@@ -39,8 +40,8 @@ public class JdbcPersistenceManager implements PersistenceManager
                     "FROM archiveMessages WHERE conversationId = ? ORDER BY time";
 
     public static final String CREATE_CONVERSATION =
-            "INSERT INTO archiveConversations (conversationId,startTime,endTime,ownerJid,ownerResource," +
-                    " withJid,withResource,subject,thread) " +
+            "INSERT INTO archiveConversations (conversationId,startTime,endTime," +
+                    " ownerJid,ownerResource,withJid,withResource,subject,thread) " +
                     "VALUES (?,?,?,?,?,?,?,?,?)";
 
     public static final String UPDATE_CONVERSATION_END =

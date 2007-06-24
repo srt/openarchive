@@ -136,16 +136,12 @@
 
     function enableDateFields()
     {
-        //$('startDate').disabled = false;
-        //$('endDate').disabled = false;
         dwr.util.setValue('dateRange', '');
         return true;
     }
 
     function disableDateFields()
     {
-        //$('startDate').disabled = true;
-        //$('endDate').disabled = true;
         dwr.util.setValue('startDate', '');
         dwr.util.setValue('endDate', '');
         return true;
