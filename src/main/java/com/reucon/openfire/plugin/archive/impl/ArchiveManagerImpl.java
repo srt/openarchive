@@ -54,13 +54,15 @@ public class ArchiveManagerImpl implements ArchiveManager
         {
             ownerJid = message.getFrom();
             withJid = message.getTo();
-            direction = ArchivedMessage.Direction.from;
+            // sent by the owner => to
+            direction = ArchivedMessage.Direction.to;
         }
         else if (server.isLocal(message.getTo()) && ! incoming)
         {
             ownerJid = message.getTo();
             withJid = message.getFrom();
-            direction = ArchivedMessage.Direction.to;
+            // received by the owner => from
+            direction = ArchivedMessage.Direction.from;
         }
         else
         {
