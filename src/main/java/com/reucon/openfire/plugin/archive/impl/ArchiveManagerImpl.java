@@ -45,7 +45,7 @@ public class ArchiveManagerImpl implements ArchiveManager
         final JID withJid;
 
         // TODO support groupchat
-        if (! (message.getType() == Message.Type.chat))
+        if (message.getType() != Message.Type.chat && message.getType() != Message.Type.normal)
         {
             return;
         }
