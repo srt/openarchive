@@ -150,6 +150,12 @@ public class ArchiveManagerImpl implements ArchiveManager
         {
             return false;
         }
+        if (! withJid.toBareJID().equals(c.getWithJid()))
+        {
+            return false;
+        }
+
+        /*
         if (ownerJid.getResource() != null)
         {
             if (! ownerJid.getResource().equals(c.getOwnerResource()))
@@ -165,10 +171,6 @@ public class ArchiveManagerImpl implements ArchiveManager
             }
         }
 
-        if (! withJid.toBareJID().equals(c.getWithJid()))
-        {
-            return false;
-        }
         if (withJid.getResource() != null)
         {
             if (! withJid.getResource().equals(c.getWithResource()))
@@ -183,6 +185,7 @@ public class ArchiveManagerImpl implements ArchiveManager
                 return false;
             }
         }
+        */
 
         if (thread != null)
         {
