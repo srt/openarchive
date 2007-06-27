@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.reucon.openfire.plugins</groupId>
     <artifactId>archive</artifactId>
@@ -10,6 +11,9 @@
         <name>Stefan Reuter</name>
         <url>http://www.reucon.com</url>
     </organization>
+    <properties>
+        <currentVersion>${pom.version}</currentVersion>
+    </properties>
     <developers>
         <developer>
             <name>Stefan Reuter</name>
@@ -28,7 +32,8 @@
     </licenses>
     <scm>
         <connection>scm:svn:http://svn.reucon.net/repos/openfire/plugins/archive/trunk</connection>
-        <developerConnection>scm:svn:https://secure.reucon.net/svn/repos/openfire/plugins/archive/trunk</developerConnection>
+        <developerConnection>scm:svn:https://secure.reucon.net/svn/repos/openfire/plugins/archive/trunk
+        </developerConnection>
     </scm>
     <distributionManagement>
         <repository>
@@ -41,7 +46,7 @@
         </snapshotRepository>
         <site>
             <id>reucon</id>
-            <url>dav:https://secure.reucon.net/maven/projects/public/${artifactId}/${version}</url>
+            <url>dav:https://secure.reucon.net/maven/projects/public/${artifactId}</url>
         </site>
     </distributionManagement>
     <repositories>

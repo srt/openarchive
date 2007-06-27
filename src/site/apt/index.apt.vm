@@ -1,0 +1,34 @@
+ ------
+ Introduction
+ ------
+ Stefan Reuter
+ ------
+ 26 June 2007
+ ------
+
+Open Archive
+
+ Open Archive is a {{{http://www.xmpp.org/extensions/xep-0136.html}XEP-0136}} complient server side message
+ archive for the {{{http://www.igniterealtime.org/projects/openfire/}Openfire}} XMPP server.
+
+ Currently it supports automated message archiving and message retrieval through XEP-0136 compliant Jabber clients
+ and a web UI for the administrator. Support for manual archiving and preferences is planned for future releases.
+
+ Open Archive requires either {{{http://www.mysql.com/}MySQL}} or the embedded {{{http://www.hsqldb.org/}HSQLDB}},
+ support for other databases might be added at a later point.
+
+ To install the plugin just rename it to <<<archive.jar>>>, place it into the plugins folder of your Openfire
+ server and enable it in the Openfire console at Server Settings/Archive Settings.
+
+[images/oa1_small.png] Archive Settings
+
+ Archive Settings ({{{images/oa1.png}large}})
+
+[images/oa2_small.png] Search Archive
+
+ Search Archive ({{{images/oa2.png}large}})
+
+Download
+
+ You can download the plugin from
+ {{{http://maven.reucon.com/public/com/reucon/openfire/plugins/archive/${currentVersion}/archive-${currentVersion}.jar}here}}. 
