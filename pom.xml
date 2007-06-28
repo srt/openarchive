@@ -3,7 +3,7 @@
     <groupId>com.reucon.openfire.plugins</groupId>
     <artifactId>archive</artifactId>
     <packaging>openfire-plugin</packaging>
-    <version>1.0.3-SNAPSHOT</version>
+    <version>1.0.3</version>
     <name>Open Archive</name>
     <description>Server side message archive for Openfire.</description>
     <organization>
@@ -30,8 +30,8 @@
         </license>
     </licenses>
     <scm>
-        <connection>scm:svn:http://svn.reucon.net/repos/openfire/plugins/archive/trunk</connection>
-        <developerConnection>scm:svn:https://secure.reucon.net/svn/repos/openfire/plugins/archive/trunk</developerConnection>
+        <connection>scm:svn:http://svn.reucon.net/repos/openfire/plugins/archive/tags/archive-1.0.3</connection>
+        <developerConnection>scm:svn:https://secure.reucon.net/svn/repos/openfire/plugins/archive/tags/archive-1.0.3</developerConnection>
     </scm>
     <distributionManagement>
         <repository>
