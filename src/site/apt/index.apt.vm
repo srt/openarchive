@@ -1,0 +1,45 @@
+ ------
+ Introduction
+ ------
+ Stefan Reuter
+ ------
+ 26 June 2007
+ ------
+
+Open Archive
+
+ Open Archive is a {{{http://www.xmpp.org/extensions/xep-0136.html}XEP-0136}} complient server side message
+ archive for the {{{http://www.igniterealtime.org/projects/openfire/}Openfire}} XMPP server.
+
+ Currently it supports automated message archiving and message retrieval through XEP-0136 compliant Jabber clients
+ and a web UI for the administrator. Support for manual archiving and preferences is planned for future releases.
+
+ Open Archive requires either {{{http://www.mysql.com/}MySQL}} or the embedded {{{http://www.hsqldb.org/}HSQLDB}},
+ support for other databases might be added at a later point.
+
+ To install the plugin just rename it to <<<archive.jar>>>, place it into the plugins folder of your Openfire
+ server and enable it in the Openfire console at Server Settings/Archive Settings.
+
+[images/oa1_small.png] Archive Settings
+
+ Archive Settings ({{{images/oa1.png}large}})
+
+[images/oa2_small.png] Search Archive
+
+ Search Archive ({{{images/oa2.png}large}})
+
+How does it differ from the Enterprise Archive?
+
+ {{{http://www.jivesoftware.org}Jive Software}} offers a
+ {{{http://www.jivesoftware.com/products/openfire/}commercial edition}} of Openfire that also includes a Message
+ Archive that looks quite similar to Open Archive. The main difference is the intened purpose:
+
+ While Open Archive is basically a server side storage for users' messages, the enterprise archive offered by
+ Jive is a tool to satisfy compliance requirements by reliably saving messages for a long time. Open Archive
+ gives users full control over their messages so they are able to remove them at any time or disable
+ archiving completely.
+
+Download
+
+ You can download the plugin from
+ {{{http://maven.reucon.com/public/com/reucon/openfire/plugins/archive/${currentVersion}/archive-${currentVersion}.jar}here}}. 
