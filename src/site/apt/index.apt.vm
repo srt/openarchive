@@ -28,6 +28,17 @@ Open Archive
 
  Search Archive ({{{images/oa2.png}large}})
 
+How does it differ from the Enterprise Archive?
+
+ {{{http://www.jivesoftware.org}Jive Software}} offers a
+ {{{http://www.jivesoftware.com/products/openfire/}commercial edition}} of Openfire that also includes a Message
+ Archive that looks quite similar to Open Archive. The main difference is the intened purpose:
+
+ While Open Archive is basically a server side storage for users' messages, the enterprise archive offered by
+ Jive is a tool to satisfy compliance requirements by reliably saving messages for a long time. Open Archive
+ gives users full control over their messages so they are able to remove them at any time or disable
+ archiving completely.
+
 Download
 
  You can download the plugin from
