@@ -3,6 +3,7 @@
 	<body>
 
 		<links>
+            <item name="My Blog" href="http://blogs.reucon.com/srt" />
 			<item name="Openfire" href="http://www.igniterealtime.org/projects/openfire" />
 		</links>
 
