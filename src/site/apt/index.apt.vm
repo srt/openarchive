@@ -8,7 +8,7 @@
 
 Open Archive
 
- Open Archive is a {{{http://www.xmpp.org/extensions/xep-0136.html}XEP-0136}} complient server side message
+ Open Archive is a {{{http://www.xmpp.org/extensions/xep-0136.html}XEP-0136}} compliant server side message
  archive for the {{{http://www.igniterealtime.org/projects/openfire/}Openfire}} XMPP server.
 
  Currently it supports automated message archiving and message retrieval through XEP-0136 compliant Jabber clients
