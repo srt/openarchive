@@ -10,7 +10,7 @@
     <packaging>openfire-plugin</packaging>
     <version>1.0.4-SNAPSHOT</version>
     <name>Open Archive</name>
-    <description>XEP-0136 comliant server side message archive for Openfire.</description>
+    <description>XEP-0136 compliant server side message archive for Openfire.</description>
     <properties>
         <currentVersion>${pom.version}</currentVersion>
     </properties>
