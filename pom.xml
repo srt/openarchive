@@ -1,27 +1,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.reucon</groupId>
+        <artifactId>reucon-public-parent</artifactId>
+        <version>1</version>
+    </parent>
     <groupId>com.reucon.openfire.plugins</groupId>
     <artifactId>archive</artifactId>
     <packaging>openfire-plugin</packaging>
     <version>1.0.4-SNAPSHOT</version>
     <name>Open Archive</name>
     <description>Server side message archive for Openfire.</description>
-    <organization>
-        <name>reucon</name>
-        <url>http://www.reucon.com</url>
-    </organization>
     <properties>
         <currentVersion>${pom.version}</currentVersion>
     </properties>
-    <developers>
-        <developer>
-            <name>Stefan Reuter</name>
-            <id>srt</id>
-            <email>stefan.reuter at reucon.com</email>
-            <organization>reucon</organization>
-            <timezone>+1</timezone>
-        </developer>
-    </developers>
     <licenses>
         <license>
             <name>GNU General Public License, Version 2.0</name>
@@ -33,46 +25,6 @@
         <connection>scm:svn:http://svn.reucon.net/repos/openfire/plugins/archive/trunk</connection>
         <developerConnection>scm:svn:https://secure.reucon.net/svn/repos/openfire/plugins/archive/trunk</developerConnection>
     </scm>
-    <distributionManagement>
-        <repository>
-            <id>reucon</id>
-            <url>dav:https://secure.reucon.net/maven/public</url>
-        </repository>
-        <snapshotRepository>
-            <id>reucon</id>
-            <url>dav:https://secure.reucon.net/maven/public-snapshot</url>
-        </snapshotRepository>
-        <site>
-            <id>reucon</id>
-            <url>dav:https://secure.reucon.net/maven/projects/public/${artifactId}</url>
-        </site>
-    </distributionManagement>
-    <repositories>
-        <repository>
-            <id>reucon</id>
-            <name>reucon public repository</name>
-            <url>http://maven.reucon.com/public</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <layout>default</layout>
-        </repository>
-        <repository>
-            <id>reucon</id>
-            <name>reucon public snapshot repository</name>
-            <url>http://maven.reucon.com/public-snapshot</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <layout>default</layout>
-        </repository>
-    </repositories>
     <dependencies>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -83,7 +35,7 @@
         <dependency>
             <groupId>org.igniterealtime.openfire</groupId>
             <artifactId>openfire</artifactId>
-            <version>3.3.1</version>
+            <version>3.3.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -98,20 +50,7 @@
         </dependency>
     </dependencies>
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
         <plugins>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
-                </configuration>
-            </plugin>
             <plugin>
                 <artifactId>maven-release-plugin</artifactId>
                 <configuration>
@@ -127,13 +66,6 @@
                 </configuration>
             </plugin>
         </plugins>
-        <extensions>
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-webdav</artifactId>
-                <version>1.0-beta-2</version>
-            </extension>
-        </extensions>
         <finalName>archive</finalName>
     </build>
 </project>
