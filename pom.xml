@@ -11,6 +11,9 @@
     <version>1.0.4-SNAPSHOT</version>
     <name>Open Archive</name>
     <description>XEP-0136 compliant server side message archive for Openfire.</description>
+    <organization>
+        <name>Stefan Reuter</name>
+    </organization>
     <properties>
         <currentVersion>${pom.version}</currentVersion>
     </properties>
