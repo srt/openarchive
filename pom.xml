@@ -7,7 +7,7 @@
     <name>Open Archive</name>
     <description>Server side message archive for Openfire.</description>
     <organization>
-        <name>Stefan Reuter</name>
+        <name>reucon</name>
         <url>http://www.reucon.com</url>
     </organization>
     <properties>
@@ -18,7 +18,7 @@
             <name>Stefan Reuter</name>
             <id>srt</id>
             <email>stefan.reuter at reucon.com</email>
-            <organization>reuter network consulting</organization>
+            <organization>reucon</organization>
             <timezone>+1</timezone>
         </developer>
     </developers>
