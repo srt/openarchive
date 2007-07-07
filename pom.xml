@@ -10,6 +10,7 @@
     <packaging>openfire-plugin</packaging>
     <version>1.0.4-SNAPSHOT</version>
     <name>Open Archive</name>
+    <url>http://maven.reucon.com/projects/public/archive</url>
     <description>XEP-0136 compliant server side message archive for Openfire.</description>
     <organization>
         <name>Stefan Reuter</name>
