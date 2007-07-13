@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+
+    <!-- Main plugin class -->
+    <class>com.reucon.openfire.plugins.userstatus.UserStatusPlugin</class>
+    
+    <!-- Plugin meta-data -->
+    <name>${pom.name}</name>
+    <description>${pom.description}</description>
+    <author>${pom.organization.name}</author>
+    <version>${pom.version}</version>
+    <date>${openfire-plugin.build.date}</date>
+    <minServerVersion>3.3.2</minServerVersion>
+    <databaseKey>user-status</databaseKey>
+    <databaseVersion>0</databaseVersion>
+    <licenseType>gpl</licenseType>
+    
+    <!-- Admin console meta-data -->
+    <adminconsole>              
+        <tab id="tab-server">
+            <sidebar id="sidebar-server-settings">
+               <item id="user-status-settings" name="${user-status.settings.title}"
+                   url="user-status-settings.jsp"
+                   description="${user-status.settings.description}" />
+            </sidebar>
+        </tab>
+    </adminconsole>
+</plugin>
