@@ -34,7 +34,7 @@
 <html>
 <head>
     <title>
-        <fmt:message key="archive.settings.title"/>
+        Archive Settings
     </title>
     <meta name="pageID" content="openarchive-settings"/>
     <script src="dwr/engine.js" type="text/javascript"></script>

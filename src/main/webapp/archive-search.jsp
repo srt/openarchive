@@ -4,7 +4,7 @@
 <html>
 <head>
     <title>
-        <fmt:message key="archive.search.title"/>
+        Search Archive
     </title>
     <meta name="pageID" content="openarchive-search"/>
     <script type="text/javascript" src="dwr/interface/AjaxFacade.js"></script>
