@@ -3,7 +3,7 @@
  ------
  Stefan Reuter
  ------
- 26 June 2007
+ 6 November 2007
  ------
 
 Open Archive
@@ -28,7 +28,12 @@ Open Archive
 
  Search Archive ({{{images/oa2.png}large}})
 
-How does it differ from the Enterprise Archive?
+* License
+
+ The User Status Plugin is licensed under the terms of the
+ {{{http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt}GNU General Public License, Version 2.0}}.
+
+* How does it differ from the Enterprise Archive?
 
  {{{http://www.jivesoftware.org}Jive Software}} offers a
  {{{http://www.jivesoftware.com/products/openfire/}commercial edition}} of Openfire that also includes a Message
@@ -39,7 +44,9 @@ How does it differ from the Enterprise Archive?
  gives users full control over their messages so they are able to remove them at any time or disable
  archiving completely.
 
-Download
+* Download
 
  You can download the plugin from
  {{{http://maven.reucon.com/public/com/reucon/openfire/plugins/archive/${currentVersion}/archive-${currentVersion}.jar}here}}. 
+
+  <<Important: Rename the jar file to archive.jar before deploying it to Openfire!>>
