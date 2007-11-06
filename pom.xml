@@ -1,0 +1,72 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.reucon</groupId>
+        <artifactId>reucon-public-parent</artifactId>
+        <version>1</version>
+    </parent>
+    <groupId>com.reucon.openfire.plugins</groupId>
+    <artifactId>user-status</artifactId>
+    <packaging>openfire-plugin</packaging>
+    <version>1.0.2</version>
+    <name>User Status Plugin</name>
+    <url>http://maven.reucon.com/projects/public/archive</url>
+    <description>Openfire plugin to save the user status to the database.</description>
+    <organization>
+        <name>Stefan Reuter</name>
+    </organization>
+    <properties>
+        <currentVersion>${pom.version}</currentVersion>
+    </properties>
+    <licenses>
+        <license>
+            <name>GNU General Public License, Version 2.0</name>
+            <url>http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <scm>
+        <connection>scm:svn:http://svn.reucon.net/repos/openfire/plugins/archive/tags/user-status-1.0.2</connection>
+        <developerConnection>scm:svn:https://secure.reucon.net/svn/repos/openfire/plugins/archive/tags/user-status-1.0.2</developerConnection>
+    </scm>
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.3</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.igniterealtime.openfire</groupId>
+            <artifactId>openfire</artifactId>
+            <version>3.4.1</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <tagBase>https://secure.reucon.net/svn/repos/openfire/plugins/archive/tags</tagBase>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.reucon.maven.plugins</groupId>
+                <artifactId>maven-openfire-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <jspPackageName>com.reucon.openfire.plugin.userstatus.jsp</jspPackageName>
+                </configuration>
+            </plugin>
+        </plugins>
+        <finalName>user-status</finalName>
+    </build>
+</project>
+    

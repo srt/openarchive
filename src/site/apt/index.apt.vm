@@ -1,0 +1,67 @@
+ ------
+ Introduction
+ ------
+ Stefan Reuter
+ ------
+ 6 November 2007
+ ------
+
+User Status Plugin
+
+ User Status Plugin is a plugin for the {{{http://www.igniterealtime.org/projects/openfire/}Openfire}}
+ XMPP server to save the user status to the database.
+
+ This plugin automatically saves the last status (presence, IP address, logon and logoff time) per
+ user and resource to userStatus table in the Openfire database.
+
+ Optionally you can archive user status entries (IP address, logon and logoff time) for a specified
+ time. History entries are stored in the userStatusHistory table. The settings for history archiving
+ can be configured on the "User Status Settings" page that you'll find on the "Server"
+ tab of the Openfire Admin Console.
+
+* License
+
+ The User Status Plugin is licensed under the terms of the
+ {{{http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt}GNU General Public License, Version 2.0}}.
+
+* Limitations
+
+ Currently this plugin only works with MySQL.
+
+* Database Schema
+
+ The userStatus table contains the last status per user and resource:
+
++--
+CREATE TABLE userStatus (
+    username        VARCHAR(64)         NOT NULL,
+    resource        VARCHAR(64)         NOT NULL,
+    online          TINYINT             NOT NULL,
+    presence        CHAR(15),
+    lastIpAddress   CHAR(15)            NOT NULL,
+    lastLoginDate   CHAR(15)            NOT NULL,
+    lastLogoffDate  CHAR(15),
+    PRIMARY KEY pk_userStatus (username, resource)
+);
++--
+
+ The userStatusHistory table contains the archived status entries if enabled:
+
++--
+CREATE TABLE userStatusHistory (
+    historyID       BIGINT              NOT NULL,
+    username        VARCHAR(64)         NOT NULL,
+    resource        VARCHAR(64)         NOT NULL,
+    lastIpAddress   CHAR(15)            NOT NULL,
+    lastLoginDate   CHAR(15)            NOT NULL,
+    lastLogoffDate  CHAR(15)            NOT NULL,
+    PRIMARY KEY pk_userStatusHistory (historyID)
+);
++--
+
+* Download
+
+ You can download the plugin from
+ {{{http://maven.reucon.com/public/com/reucon/openfire/plugins/user-status/${currentVersion}/user-status-${currentVersion}.jar}here}}.
+
+ <<Important: Rename the jar file to user-status.jar before deploying it to Openfire!>>

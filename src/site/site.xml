@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<project name="User Status Plugin">
+	<body>
+
+		<links>
+            <item name="My Blog" href="http://blogs.reucon.com/srt" />
+			<item name="Openfire" href="http://www.igniterealtime.org/projects/openfire" />
+		</links>
+
+		<menu name="Overview">
+			<item name="Home" href="index.html" />
+            <item name="Download" href="http://maven.reucon.com/public/com/reucon/openfire/plugins/user-status/" />
+		</menu>
+		${reports}
+	</body>
+</project>
