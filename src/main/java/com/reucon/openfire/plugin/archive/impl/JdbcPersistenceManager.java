@@ -84,7 +84,7 @@ public class JdbcPersistenceManager implements PersistenceManager
             id = SequenceManager.nextID(message);
             pstmt.setLong(1, id);
             pstmt.setLong(2, dateToMillis(message.getTime()));
-            pstmt.setString(3, message.getDirection().toString());
+            pstmt.setString(3, message.getDirection().name());
             pstmt.setString(4, message.getType());
             pstmt.setString(5, message.getSubject());
             pstmt.setString(6, message.getBody());
@@ -791,7 +791,9 @@ public class JdbcPersistenceManager implements PersistenceManager
         final long id;
 
         id = rs.getLong(1);
-        message = new ArchivedMessage(millisToDate(rs.getLong(2)), ArchivedMessage.Direction.valueOf(rs.getString(3)),
+        //TODO workaround for PostgreSQL, see http://www.igniterealtime.org/community/message/158668 patch from ctux.
+        //Log.error("--" + rs.getLong(2) + "-" + rs.getString(3) + "-" + rs.getString(4));
+        message = new ArchivedMessage(millisToDate(rs.getLong(2)), ArchivedMessage.Direction.valueOf(rs.getString(3).trim()),
                 rs.getString(4));
         message.setId(id);
         message.setSubject(rs.getString(5));
