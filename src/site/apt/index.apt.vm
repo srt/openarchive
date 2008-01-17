@@ -14,7 +14,8 @@ Open Archive
  Currently it supports automated message archiving and message retrieval through XEP-0136 compliant Jabber clients
  and a web UI for the administrator. Support for manual archiving and preferences is planned for future releases.
 
- Open Archive requires either {{{http://www.mysql.com/}MySQL}} or the embedded {{{http://www.hsqldb.org/}HSQLDB}},
+ Open Archive requires either {{{http://www.mysql.com/}MySQL}}, PostgreSQL, MSSQL
+ or the embedded {{{http://www.hsqldb.org/}HSQLDB}},
  support for other databases might be added at a later point.
 
  To install the plugin just rename it to <<<archive.jar>>>, place it into the plugins folder of your Openfire
