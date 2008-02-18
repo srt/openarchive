@@ -19,6 +19,8 @@ import com.reucon.openfire.plugin.archive.ArchivePlugin;
  */
 public class Xep0136Support
 {
+    private static final String NAMESPACE_AUTO = "http://www.xmpp.org/extensions/xep-0136.html#ns-auto";
+
     final XMPPServer server;
     final Map<String, IQHandler> element2Handlers;
     final IQHandler iqDispatcher;
@@ -49,9 +51,14 @@ public class Xep0136Support
         };
         
         iqHandlers = new ArrayList<IQHandler>();
+
+        // support for #ns-pref
         //iqHandlers.add(new IQPrefHandler());
+
+        // support for #ns-manage
         iqHandlers.add(new IQListHandler());
         iqHandlers.add(new IQRetrieveHandler());
+        //iqHandlers.add(new IQRemoveHandler());
     }
 
     public void start()
@@ -78,6 +85,7 @@ public class Xep0136Support
                 }
             }
         }
+        server.getIQDiscoInfoHandler().addServerFeature(NAMESPACE_AUTO);
         server.getIQRouter().addHandler(iqDispatcher);
     }
 

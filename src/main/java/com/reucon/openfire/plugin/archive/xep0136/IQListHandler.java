@@ -5,16 +5,21 @@ import com.reucon.openfire.plugin.archive.util.XmppDateUtil;
 import com.reucon.openfire.plugin.archive.xep0059.XmppResultSet;
 import org.dom4j.Element;
 import org.jivesoftware.openfire.auth.UnauthorizedException;
+import org.jivesoftware.openfire.disco.ServerFeaturesProvider;
 import org.xmpp.packet.IQ;
 import org.xmpp.packet.JID;
 
 import java.util.List;
+import java.util.Iterator;
+import java.util.ArrayList;
 
 /**
  * Message Archiving List Handler.
  */
-public class IQListHandler extends AbstractIQHandler
+public class IQListHandler extends AbstractIQHandler implements ServerFeaturesProvider
 {
+    private static final String NAMESPACE_MANAGE = "http://www.xmpp.org/extensions/xep-0136.html#ns-manage";
+
     public IQListHandler()
     {
         super("Message Archiving List Handler", "list");
@@ -58,4 +63,12 @@ public class IQListHandler extends AbstractIQHandler
 
         return chatElement;
     }
+
+    public Iterator<String> getFeatures()
+    {
+        ArrayList<String> features = new ArrayList<String>();
+        features.add(NAMESPACE_MANAGE);
+        return features.iterator();
+    }
+
 }
