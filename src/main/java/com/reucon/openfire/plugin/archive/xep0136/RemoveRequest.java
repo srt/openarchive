@@ -20,27 +20,24 @@ import java.util.Date;
  */
 public class RemoveRequest
 {
-    private String with;
-    private Date start;
-    private Date end;
-    private Boolean open;
+    private final String with;
+    private final Date start;
+    private final Date end;
+    private final boolean open;
 
     public RemoveRequest(Element listElement)
     {
         this.with = listElement.attributeValue("with");
         this.start = XmppDateUtil.parseDate(listElement.attributeValue("start"));
         this.end = XmppDateUtil.parseDate(listElement.attributeValue("end"));
-        if (listElement.attributeValue("open") != null)
-        {
-            this.open = "true".equals(listElement.attributeValue("open"));
-        }
+        this.open = "true".equals(listElement.attributeValue("open"));
     }
 
     /**
      * The 'with' attribute MAY be a full JID, bare JID or domain.<br>
      * If the 'with' attribute is omitted then collections with any JID are removed.
      *
-     * @return the value of the with attribute.
+     * @return the value of the with attribute, may be <code>null</code>.
      */
     public String getWith()
     {
@@ -51,7 +48,7 @@ public class RemoveRequest
      * If the start date is before all the collections in the archive then all collections prior
      * to the end date are removed.
      *
-     * @return the value of the start attribute.
+     * @return the value of the start attribute, may be <code>null</code>.
      */
     public Date getStart()
     {
@@ -61,7 +58,7 @@ public class RemoveRequest
     /**
      * If the end date is in the future then then all collections after the start date are removed.
      *
-     * @return the value of the end attribute.
+     * @return the value of the end attribute, may be <code>null</code>.
      */
     public Date getEnd()
     {
@@ -72,9 +69,9 @@ public class RemoveRequest
      * If the value of the optional 'open' attribute is set to 'true' then only collections that
      * are currently being recorded automatically by the server (see Automated Archiving) are removed.
      *
-     * @return the value of the open attribute.
+     * @return the value of the open attribute or <code>false</code> if not set.
      */
-    public Boolean getOpen()
+    public boolean getOpen()
     {
         return open;
     }
