@@ -19,7 +19,7 @@ import com.reucon.openfire.plugin.archive.ArchivePlugin;
  */
 public class Xep0136Support
 {
-    private static final String NAMESPACE_AUTO = "http://www.xmpp.org/extensions/xep-0136.html#ns-auto";
+    private static final String NAMESPACE_AUTO = "urn:xmpp:archive:auto";
 
     final XMPPServer server;
     final Map<String, IQHandler> element2Handlers;

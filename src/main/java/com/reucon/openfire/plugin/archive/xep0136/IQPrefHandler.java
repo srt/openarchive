@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class IQPrefHandler extends AbstractIQHandler implements ServerFeaturesProvider
 {
-    private static final String NAMESPACE_PREF = "http://www.xmpp.org/extensions/xep-0136.html#ns-pref";
+    private static final String NAMESPACE_PREF = "urn:xmpp:archive:pref";
 
     public IQPrefHandler()
     {

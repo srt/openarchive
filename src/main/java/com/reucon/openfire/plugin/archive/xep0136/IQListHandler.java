@@ -18,7 +18,7 @@ import java.util.ArrayList;
  */
 public class IQListHandler extends AbstractIQHandler implements ServerFeaturesProvider
 {
-    private static final String NAMESPACE_MANAGE = "http://www.xmpp.org/extensions/xep-0136.html#ns-manage";
+    private static final String NAMESPACE_MANAGE = "urn:xmpp:archive:manage";
 
     public IQListHandler()
     {

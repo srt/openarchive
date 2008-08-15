@@ -14,7 +14,7 @@ import org.xmpp.packet.PacketError;
  */
 public abstract class AbstractIQHandler extends IQHandler
 {
-    protected static final String NAMESPACE = "http://www.xmpp.org/extensions/xep-0136.html#ns";
+    protected static final String NAMESPACE = "urn:xmpp:archive";
     private final IQHandlerInfo info;
 
     protected AbstractIQHandler(String moduleName, String elementName)
