@@ -10,7 +10,7 @@ import org.jivesoftware.openfire.container.PluginManager;
 import org.jivesoftware.openfire.interceptor.InterceptorManager;
 import org.jivesoftware.openfire.interceptor.PacketInterceptor;
 import org.jivesoftware.openfire.interceptor.PacketRejectedException;
-import org.jivesoftware.openfire.muc.MultiUserChatServer;
+import org.jivesoftware.openfire.muc.MultiUserChatManager;
 import org.jivesoftware.openfire.session.Session;
 import org.jivesoftware.util.JiveGlobals;
 import org.jivesoftware.util.Log;
@@ -39,7 +39,7 @@ public class ArchivePlugin implements Plugin, PacketInterceptor
     private PropertyListener propertyListener;
 
     private XMPPServer server;
-    private MultiUserChatServer mucServer;
+    private MultiUserChatManager mucServer;
 
     private ArchiveManager archiveManager;
     private PersistenceManager persistenceManager;
@@ -63,7 +63,7 @@ public class ArchivePlugin implements Plugin, PacketInterceptor
         enabled = JiveGlobals.getBooleanProperty(ArchiveProperties.ENABLED, false);
 
         server = XMPPServer.getInstance();
-        mucServer = server.getMultiUserChatServer();
+        mucServer = server.getMultiUserChatManager();
         //mucServer.addListener();
 
         persistenceManager = new JdbcPersistenceManager();
