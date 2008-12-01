@@ -56,4 +56,4 @@ methodUsage INTEGER,
 PRIMARY KEY (username,methodType)
 );
 
-INSERT INTO jive.jiveVersion (name, version) VALUES ('archive', 2);
+INSERT INTO ofVersion (name, version) VALUES ('archive', 2);

@@ -37,4 +37,4 @@ CREATE TABLE archiveMessages (
 CREATE INDEX idx_archiveMessages_conversationId ON archiveMessages (conversationId);
 CREATE INDEX idx_archiveMessages_time ON archiveMessages (time);
 
-INSERT INTO jiveVersion (name, version) VALUES ('archive', 2);
+INSERT INTO ofVersion (name, version) VALUES ('archive', 2);

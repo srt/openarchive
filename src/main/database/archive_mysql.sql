@@ -56,4 +56,4 @@ CREATE TABLE archivePrefMethods (
   PRIMARY KEY (username,methodType)
 );
 
-INSERT INTO jiveVersion (name, version) VALUES ('archive', 2);
+INSERT INTO ofVersion (name, version) VALUES ('archive', 2);
