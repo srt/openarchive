@@ -42,12 +42,12 @@ public class IQRetrieveHandler extends AbstractIQHandler
 
         max = conversation.getMessages().size();
         fromIndex = 0;
-        toIndex = max > 1 ? max - 1 : 0;
+        toIndex = max > 0 ? max : 0;
 
         final XmppResultSet resultSet = retrieveRequest.getResultSet();
         if (resultSet != null)
         {
-            if (resultSet.getMax() != null && resultSet.getMax() < max)
+            if (resultSet.getMax() != null && resultSet.getMax() <= max)
             {
                 max = resultSet.getMax();
                 toIndex = fromIndex + max;
