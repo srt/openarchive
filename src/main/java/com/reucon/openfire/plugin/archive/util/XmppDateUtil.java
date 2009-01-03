@@ -15,11 +15,14 @@ import java.util.TimeZone;
 public class XmppDateUtil
 {
     private static final DateFormat dateFormat;
+    private static final DateFormat dateFormatWithoutMillis;
 
     static
     {
         dateFormat =  new SimpleDateFormat(JiveConstants.XMPP_DATETIME_FORMAT);
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        dateFormatWithoutMillis =  new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        dateFormatWithoutMillis.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     private XmppDateUtil()
@@ -29,6 +32,8 @@ public class XmppDateUtil
 
     public static Date parseDate(String dateString)
     {
+        Date date = null;
+
         if (dateString == null)
         {
             return null;
@@ -38,13 +43,32 @@ public class XmppDateUtil
         {
             try
             {
-                return dateFormat.parse(dateString);
+                date = dateFormat.parse(dateString);
             }
             catch (ParseException e)
             {
-                return null;
+                // ignore
             }
         }
+
+        if (date != null)
+        {
+            return date;
+        }
+
+        synchronized(dateFormatWithoutMillis)
+        {
+            try
+            {
+                date = dateFormatWithoutMillis.parse(dateString);
+            }
+            catch (ParseException e)
+            {
+                // ignore
+            }
+        }
+
+        return date;
     }
 
     public static String formatDate(Date date)

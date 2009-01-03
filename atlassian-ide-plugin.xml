@@ -1,5 +1,19 @@
 <atlassian-ide-plugin>
   <project-configuration>
-    <servers />
+    <servers>
+      <jira>
+        <server-id>6fc0a876-2c07-4549-985c-9427236b92df</server-id>
+        <name>jira.reucon.org</name>
+        <url>http://jira.reucon.org</url>
+      </jira>
+      <bamboo>
+        <server-id>9f9c90f9-3a13-42da-b544-9417f9fc15c5</server-id>
+        <name>reucon</name>
+        <url>https://secure.reucon.net/build</url>
+        <use-favourites>false</use-favourites>
+        <bamboo2>true</bamboo2>
+        <plans />
+      </bamboo>
+    </servers>
   </project-configuration>
 </atlassian-ide-plugin>

@@ -689,8 +689,10 @@ public class JdbcPersistenceManager implements PersistenceManager
         }
         else
         {
-            querySB.append(CONVERSATION_OWNER_JID).append(" = ? AND ");
-            querySB.append(CONVERSATION_WITH_JID).append(" = ? AND ");
+            querySB.append(CONVERSATION_OWNER_JID).append(" = ?");
+            querySB.append(" AND ");
+            querySB.append(CONVERSATION_WITH_JID).append(" = ?");
+            querySB.append(" AND ");
             querySB.append(CONVERSATION_START_TIME).append(" = ? ");
         }
 
