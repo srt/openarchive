@@ -22,7 +22,7 @@ import java.util.List;
 public class JdbcPersistenceManager implements PersistenceManager
 {
     public static final int DEFAULT_MAX = 1000;
-    
+
     public static final String CREATE_MESSAGE =
             "INSERT INTO archiveMessages (messageId,time,direction,type,subject,body,conversationId) " +
                     "VALUES (?,?,?,?,?,?,?)";
@@ -384,7 +384,7 @@ public class JdbcPersistenceManager implements PersistenceManager
         {
             Integer firstIndex = null;
             int max = xmppResultSet.getMax() != null ? xmppResultSet.getMax() : DEFAULT_MAX;
-            
+
             xmppResultSet.setCount(countConversations(startDate, endDate, ownerJid, withJid, whereSB.toString()));
             if (xmppResultSet.getIndex() != null)
             {
@@ -690,16 +690,23 @@ public class JdbcPersistenceManager implements PersistenceManager
         else
         {
             querySB.append(CONVERSATION_OWNER_JID).append(" = ?");
-            querySB.append(" AND ");
-            querySB.append(CONVERSATION_WITH_JID).append(" = ?");
-            querySB.append(" AND ");
-            querySB.append(CONVERSATION_START_TIME).append(" = ? ");
+            if (withJid != null)
+            {
+                querySB.append(" AND ");
+                querySB.append(CONVERSATION_WITH_JID).append(" = ?");
+            }
+            if (start != null)
+            {
+                querySB.append(" AND ");
+                querySB.append(CONVERSATION_START_TIME).append(" = ? ");
+            }
         }
 
         try
         {
             con = DbConnectionManager.getConnection();
             pstmt = con.prepareStatement(querySB.toString());
+            int i = 1;
 
             if (conversationId != null)
             {
@@ -707,9 +714,15 @@ public class JdbcPersistenceManager implements PersistenceManager
             }
             else
             {
-                pstmt.setString(1, ownerJid);
-                pstmt.setString(2, withJid);
-                pstmt.setLong(3, dateToMillis(start));
+                pstmt.setString(i++, ownerJid);
+                if (withJid != null)
+                {
+                    pstmt.setString(i++, withJid);
+                }
+                if (start != null)
+                {
+                    pstmt.setLong(i++, dateToMillis(start));
+                }
             }
             rs = pstmt.executeQuery();
             if (rs.next())
