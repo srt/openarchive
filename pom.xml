@@ -3,7 +3,7 @@
     <parent>
         <groupId>com.reucon</groupId>
         <artifactId>reucon-public-parent</artifactId>
-        <version>3</version>
+        <version>5</version>
     </parent>
     <groupId>com.reucon.openfire.plugins</groupId>
     <artifactId>archive</artifactId>
@@ -16,7 +16,8 @@
         <name>Stefan Reuter</name>
     </organization>
     <properties>
-        <currentVersion>${pom.version}</currentVersion>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <currentVersion>${project.version}</currentVersion>
     </properties>
     <licenses>
         <license>
@@ -26,8 +27,8 @@
         </license>
     </licenses>
     <scm>
-        <connection>scm:svn:http://svn.reucon.net/repos/openfire/plugins/archive/trunk</connection>
-        <developerConnection>scm:svn:https://secure.reucon.net/svn/repos/openfire/plugins/archive/trunk</developerConnection>
+        <connection>scm:git:git://github.com/srt/openarchive.git</connection>
+        <developerConnection>scm:git:git://github.com/srt/openarchive.git</developerConnection>
     </scm>
     <issueManagement>
         <system>JIRA</system>
@@ -72,9 +73,7 @@
         <plugins>
             <plugin>
                 <artifactId>maven-release-plugin</artifactId>
-                <configuration>
-                    <tagBase>https://secure.reucon.net/svn/repos/openfire/plugins/archive/tags</tagBase>
-                </configuration>
+                <version>2.2.1</version>
             </plugin>
             <plugin>
                 <groupId>com.reucon.maven.plugins</groupId>
