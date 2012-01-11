@@ -3,3 +3,5 @@ target
 *.ipr
 *.iws
 *.ids
+.idea
+atlassian-ide-plugin.xml
