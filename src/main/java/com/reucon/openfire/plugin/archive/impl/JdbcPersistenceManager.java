@@ -58,6 +58,7 @@ public class JdbcPersistenceManager implements PersistenceManager
     public static final String CONVERSATION_END_TIME = "c.endTime";
     public static final String CONVERSATION_OWNER_JID = "c.ownerJid";
     public static final String CONVERSATION_WITH_JID = "c.withJid";
+    public static final String CONVERSATION_WITH_JID_RESOURCE = "c.withResource";
 
     public static final String SELECT_ACTIVE_CONVERSATIONS =
             "SELECT c.conversationId,c.startTime,c.endTime,c.ownerJid,c.ownerResource,withJid,c.withResource," +
@@ -680,6 +681,9 @@ public class JdbcPersistenceManager implements PersistenceManager
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
+        
+        String bareWithJid = "";
+        String withJidResource = null;
 
         querySB = new StringBuilder(SELECT_CONVERSATIONS);
         querySB.append(" WHERE ");
@@ -693,7 +697,18 @@ public class JdbcPersistenceManager implements PersistenceManager
             if (withJid != null)
             {
                 querySB.append(" AND ");
+                
+                // look for resource on with JID
+                String[] parts = withJid.split("\\/");
+                bareWithJid = parts[0];
+                
                 querySB.append(CONVERSATION_WITH_JID).append(" = ?");
+
+                if(parts.length > 1) {
+                	withJidResource = parts[1];
+                	querySB.append(" AND ");
+                	querySB.append(CONVERSATION_WITH_JID_RESOURCE).append(" = ?");
+                }
             }
             if (start != null)
             {
@@ -717,7 +732,11 @@ public class JdbcPersistenceManager implements PersistenceManager
                 pstmt.setString(i++, ownerJid);
                 if (withJid != null)
                 {
-                    pstmt.setString(i++, withJid);
+                    pstmt.setString(i++, bareWithJid);
+                }
+                if (withJidResource != null)
+                {
+                    pstmt.setString(i++, withJidResource);
                 }
                 if (start != null)
                 {
