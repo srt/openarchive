@@ -2,6 +2,7 @@ CREATE TABLE archiveConversations (
   conversationId        BIGINT          NOT NULL PRIMARY KEY,
   startTime             BIGINT          NOT NULL,
   endTime               BIGINT          NOT NULL,
+  version               BIGINT          NOT NULL,
   ownerJid              VARCHAR(255)    NOT NULL,
   ownerResource         VARCHAR(255),
   withJid               VARCHAR(255)    NOT NULL,
@@ -37,4 +38,4 @@ CREATE TABLE archiveMessages (
 CREATE INDEX idx_archiveMessages_conversationId ON archiveMessages (conversationId);
 CREATE INDEX idx_archiveMessages_time ON archiveMessages (time);
 
-INSERT INTO ofVersion (name, version) VALUES ('archive', 2);
+INSERT INTO ofVersion (name, version) VALUES ('archive', 3);

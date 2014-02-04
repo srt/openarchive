@@ -1,3 +1,23 @@
+/**
+ *
+ * Copyright (C) 20xx  Stefan Reuter + others  
+ * Copyright (C) 2012  Taylor Raack <taylor@raack.info>
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
 package com.reucon.openfire.plugin.archive.impl;
 
 import com.reucon.openfire.plugin.archive.ArchivedMessageConsumer;
@@ -11,10 +31,12 @@ import org.jivesoftware.database.SequenceManager;
 import org.jivesoftware.util.Log;
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Manages database persistence.
@@ -29,7 +51,7 @@ public class JdbcPersistenceManager implements PersistenceManager
 
     public static final String SELECT_ALL_MESSAGES =
             "SELECT m.messageId,m.time,m.direction,m.type,m.subject,m.body," +
-                    " c.conversationId,c.startTime,c.endTime," +
+                    " c.conversationId,c.startTime,c.endTime,c.version," +
                     " c.ownerJid,c.ownerResource,c.withJid,c.withResource,c.subject,c.thread " +
                     "FROM archiveMessages AS m, archiveConversations AS c " +
                     "WHERE m.conversationId = c.conversationId " +
@@ -41,14 +63,14 @@ public class JdbcPersistenceManager implements PersistenceManager
 
     public static final String CREATE_CONVERSATION =
             "INSERT INTO archiveConversations (conversationId,startTime,endTime," +
-                    " ownerJid,ownerResource,withJid,withResource,subject,thread) " +
-                    "VALUES (?,?,?,?,?,?,?,?,?)";
+                    " ownerJid,ownerResource,withJid,withResource,subject,thread,version) " +
+                    "VALUES (?,?,?,?,?,?,?,?,?,0)";
 
     public static final String UPDATE_CONVERSATION_END =
-            "UPDATE archiveConversations SET endTime = ? WHERE conversationId = ?";
+            "UPDATE archiveConversations SET endTime = ?, version = ? WHERE conversationId = ?";
 
     public static final String SELECT_CONVERSATIONS =
-            "SELECT c.conversationId,c.startTime,c.endTime,c.ownerJid,c.ownerResource,c.withJid,c.withResource," +
+            "SELECT c.conversationId,c.startTime,c.endTime,c.version,c.ownerJid,c.ownerResource,c.withJid,c.withResource," +
                     " c.subject,c.thread " +
                     "FROM archiveConversations AS c";
     public static final String COUNT_CONVERSATIONS =
@@ -61,7 +83,7 @@ public class JdbcPersistenceManager implements PersistenceManager
     public static final String CONVERSATION_WITH_JID_RESOURCE = "c.withResource";
 
     public static final String SELECT_ACTIVE_CONVERSATIONS =
-            "SELECT c.conversationId,c.startTime,c.endTime,c.ownerJid,c.ownerResource,withJid,c.withResource," +
+            "SELECT c.conversationId,c.startTime,c.endTime,c.version,c.ownerJid,c.ownerResource,withJid,c.withResource," +
                     " c.subject,c.thread " +
                     "FROM archiveConversations AS c WHERE c.endTime > ?";
 
@@ -129,9 +151,9 @@ public class JdbcPersistenceManager implements PersistenceManager
                 if (conversation == null || !conversation.getId().equals(conversationId))
                 {
                     conversation = new Conversation(
-                            millisToDate(rs.getLong(8)), millisToDate(rs.getLong(9)),
-                            rs.getString(10), rs.getString(11), rs.getString(12), rs.getString(13),
-                            rs.getString(14), rs.getString(15));
+                            millisToDate(rs.getLong(8)), millisToDate(rs.getLong(9)), rs.getLong(10),
+                            rs.getString(11), rs.getString(12), rs.getString(13), rs.getString(14),
+                            rs.getString(15), rs.getString(16));
                     conversation.setId(conversationId);
                 }
                 message.setConversation(conversation);
@@ -206,7 +228,8 @@ public class JdbcPersistenceManager implements PersistenceManager
             con = DbConnectionManager.getConnection();
             pstmt = con.prepareStatement(UPDATE_CONVERSATION_END);
             pstmt.setLong(1, dateToMillis(conversation.getEnd()));
-            pstmt.setLong(2, conversation.getId());
+            pstmt.setLong(2, conversation.getVersion());
+            pstmt.setLong(3, conversation.getId());
             pstmt.executeUpdate();
 
             return true;
@@ -449,6 +472,101 @@ public class JdbcPersistenceManager implements PersistenceManager
         }
         return conversations;
     }
+    
+	public List<Conversation> findModifiedConversationsSince(Date date, String ownerJid, String withJid, XmppResultSet xmppResultSet) {
+		final List<Conversation> conversations;
+        final StringBuilder querySB;
+        final StringBuilder whereSB;
+        final StringBuilder limitSB;
+
+        conversations = new ArrayList<Conversation>();
+
+        querySB = new StringBuilder(SELECT_CONVERSATIONS);
+        whereSB = new StringBuilder();
+        limitSB = new StringBuilder();
+        
+        String bareWithJid = null;
+        String withJidResource = null;
+
+        if(date != null)
+        {
+            appendWhere(whereSB, CONVERSATION_END_TIME, " >= ?");
+        }
+        if (ownerJid != null)
+        {
+            appendWhere(whereSB, CONVERSATION_OWNER_JID, " = ?");
+        }
+        if (withJid != null)
+        {
+            
+            
+            // look for resource on with JID
+            String[] parts = withJid.split("\\/");
+            bareWithJid = parts[0];
+            
+            appendWhere(whereSB, CONVERSATION_WITH_JID, " = ?");
+
+            if(parts.length > 1) {
+            	withJidResource = parts[1];
+            	appendWhere(whereSB, CONVERSATION_WITH_JID_RESOURCE, " = ?");
+            }
+        }
+
+        if (xmppResultSet != null)
+        {
+        	// TODO - need the "last" identified logic here
+            Integer firstIndex = null;
+            int max = xmppResultSet.getMax() != null ? xmppResultSet.getMax() : DEFAULT_MAX;
+
+            // set <count> as the total count, not just this fragment of collections
+            xmppResultSet.setCount(countModifiedConversationsSince(date, ownerJid, bareWithJid, withJidResource, whereSB.toString()));
+            limitSB.append(" LIMIT ").append(max);
+        }
+
+        if (whereSB.length() != 0)
+        {
+            querySB.append(" WHERE ").append(whereSB);
+        }
+        
+        // The server MUST return the changed collections in the chronological order that they were changed (most recent last).
+        querySB.append(" ORDER BY ").append(CONVERSATION_END_TIME);
+        querySB.append(limitSB);
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try
+        {
+            con = DbConnectionManager.getConnection();
+            pstmt = con.prepareStatement(querySB.toString());
+        	Date queryDate = date;
+            /*if(xmppResultSet.getAfter() != null) {
+            	queryDate = new Date(xmppResultSet.getAfter() + 1);
+            }*/
+            bindModifiedConversationSinceParameters(queryDate, ownerJid, bareWithJid, withJidResource, pstmt);
+            rs = pstmt.executeQuery();
+            while (rs.next())
+            {
+                conversations.add(extractConversation(rs));
+            }
+        }
+        catch (SQLException sqle)
+        {
+            Log.error("Error selecting conversations", sqle);
+        }
+        finally
+        {
+            DbConnectionManager.closeConnection(rs, pstmt, con);
+        }
+
+        if (xmppResultSet != null && conversations.size() > 0)
+        {
+        	// set <last> to millis since epoch
+        	Date endDate = conversations.get(conversations.size() - 1).getEnd();
+            xmppResultSet.setLast(endDate.getTime());
+        }
+        return conversations;
+	}
 
     private void appendWhere(StringBuilder sb, String... fragments)
     {
@@ -481,6 +599,45 @@ public class JdbcPersistenceManager implements PersistenceManager
             con = DbConnectionManager.getConnection();
             pstmt = con.prepareStatement(querySB.toString());
             bindConversationParameters(startDate, endDate, ownerJid, withJid, pstmt);
+            rs = pstmt.executeQuery();
+            if (rs.next())
+            {
+                return rs.getInt(1);
+            }
+            else
+            {
+                return 0;
+            }
+        }
+        catch (SQLException sqle)
+        {
+            Log.error("Error counting conversations", sqle);
+            return 0;
+        }
+        finally
+        {
+            DbConnectionManager.closeConnection(rs, pstmt, con);
+        }
+    }
+    
+    private int countModifiedConversationsSince(Date date, String ownerJid, String withBareJid, String withJidResource, String whereClause)
+    {
+        StringBuilder querySB;
+
+        querySB = new StringBuilder(COUNT_CONVERSATIONS);
+        if (whereClause != null && whereClause.length() != 0)
+        {
+            querySB.append(" WHERE ").append(whereClause);
+        }
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try
+        {
+            con = DbConnectionManager.getConnection();
+            pstmt = con.prepareStatement(querySB.toString());
+            bindModifiedConversationSinceParameters(date, ownerJid, withBareJid, withJidResource, pstmt);
             rs = pstmt.executeQuery();
             if (rs.next())
             {
@@ -565,6 +722,29 @@ public class JdbcPersistenceManager implements PersistenceManager
         if (withJid != null)
         {
             pstmt.setString(parameterIndex++, withJid);
+        }
+        return parameterIndex;
+    }
+    
+    private int bindModifiedConversationSinceParameters(Date date, String ownerJid, String withBareJid, String withJidResource, PreparedStatement pstmt) throws SQLException
+    {
+        int parameterIndex = 1;
+
+        if (date != null)
+        {
+            pstmt.setLong(parameterIndex++, dateToMillis(date));
+        }
+        if (ownerJid != null)
+        {
+            pstmt.setString(parameterIndex++, ownerJid);
+        }
+        if (withBareJid != null)
+        {
+            pstmt.setString(parameterIndex++, withBareJid);
+        }
+        if (withJidResource != null)
+        {
+            pstmt.setString(parameterIndex++, withJidResource);
         }
         return parameterIndex;
     }
@@ -801,8 +981,8 @@ public class JdbcPersistenceManager implements PersistenceManager
 
         id = rs.getLong(1);
         conversation = new Conversation(millisToDate(rs.getLong(2)), millisToDate(rs.getLong(3)),
-                rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7),
-                rs.getString(8), rs.getString(9));
+                rs.getLong(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8),
+                rs.getString(9), rs.getString(10));
         conversation.setId(id);
         return conversation;
     }
@@ -844,4 +1024,6 @@ public class JdbcPersistenceManager implements PersistenceManager
     {
         return millis == null ? null : new Date(millis);
     }
+
+	
 }

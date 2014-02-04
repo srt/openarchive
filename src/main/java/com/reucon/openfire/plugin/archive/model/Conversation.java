@@ -1,3 +1,24 @@
+/**
+ *
+ * Copyright (C) 20xx  Stefan Reuter + others  
+ * Copyright (C) 2012  Taylor Raack <taylor@raack.info>
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+
 package com.reucon.openfire.plugin.archive.model;
 
 import org.jivesoftware.database.JiveID;
@@ -13,6 +34,7 @@ public class Conversation
     private Long id;
     private final Date start;
     private Date end;
+    private Long version;
     private final String ownerJid;
     private final String ownerResource;
     private final String withJid;
@@ -25,14 +47,15 @@ public class Conversation
     public Conversation(Date start, String ownerJid, String ownerResource, String withJid, String withResource,
                         String subject, String thread)
     {
-        this(start, start, ownerJid, ownerResource, withJid, withResource, subject, thread);
+        this(start, start, 0L, ownerJid, ownerResource, withJid, withResource, subject, thread);
     }
 
-    public Conversation(Date start, Date end, String ownerJid, String ownerResource, String withJid, String withResource,
+    public Conversation(Date start, Date end, Long version, String ownerJid, String ownerResource, String withJid, String withResource,
                         String subject, String thread)
     {
         this.start = start;
         this.end = end;
+        this.version = version;
         this.ownerJid = ownerJid;
         this.ownerResource = ownerResource;
         this.withJid = withJid;
@@ -67,8 +90,16 @@ public class Conversation
     {
         this.end = end;
     }
+    
+    public Long getVersion() {
+		return version;
+	}
 
-    public String getOwnerJid()
+	public void setVersion(Long version) {
+		this.version = version;
+	}
+
+	public String getOwnerJid()
     {
         return ownerJid;
     }

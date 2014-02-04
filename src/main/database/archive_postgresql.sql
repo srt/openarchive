@@ -2,6 +2,7 @@ CREATE TABLE archiveConversations (
   conversationId        BIGINT          NOT NULL,
   startTime             BIGINT          NOT NULL,
   endTime               BIGINT          NOT NULL,
+  version               BIGINT          NOT NULL,
   ownerJid              VARCHAR(255)    NOT NULL,
   ownerResource         VARCHAR(255),
   withJid               VARCHAR(255)    NOT NULL,
@@ -57,4 +58,4 @@ CREATE TABLE archivePrefMethods (
   CONSTRAINT archivePrefMethods_pk PRIMARY KEY (username,methodType)
 );
 
-INSERT INTO ofVersion (name, version) VALUES ('archive', 2);
+INSERT INTO ofVersion (name, version) VALUES ('archive', 3);

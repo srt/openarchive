@@ -137,6 +137,7 @@ public class ArchiveManagerImpl implements ArchiveManager
             else
             {
                 conversation.setEnd(archivedMessage.getTime());
+                conversation.setVersion(conversation.getVersion() + 1);
                 persistenceManager.updateConversationEnd(conversation);
             }
         }

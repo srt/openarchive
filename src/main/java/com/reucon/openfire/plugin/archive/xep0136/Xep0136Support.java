@@ -19,6 +19,7 @@ import com.reucon.openfire.plugin.archive.ArchivePlugin;
  */
 public class Xep0136Support
 {
+	private static final String NAMESPACE_BASE = "urn:xmpp:archive";
     private static final String NAMESPACE_AUTO = "urn:xmpp:archive:auto";
 
     final XMPPServer server;
@@ -58,11 +59,16 @@ public class Xep0136Support
         // support for #ns-manage
         iqHandlers.add(new IQListHandler());
         iqHandlers.add(new IQRetrieveHandler());
+        iqHandlers.add(new IQModifiedHandler());
+        // TODO -if the remove handler is ever implemented, the IQModifiedHandler must be adjusted to
+        // send back any removed collections
         //iqHandlers.add(new IQRemoveHandler());
     }
 
     public void start()
     {
+        server.getIQDiscoInfoHandler().addServerFeature(NAMESPACE_BASE);
+        
         for (IQHandler iqHandler : iqHandlers)
         {
             try

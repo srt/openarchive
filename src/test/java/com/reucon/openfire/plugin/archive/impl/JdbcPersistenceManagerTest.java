@@ -38,7 +38,7 @@ public class JdbcPersistenceManagerTest {
 		mockStatic(DbConnectionManager.class);
 		
 		// conversation query mocking
-		String expectedCollectionQuery = "SELECT c.conversationId,c.startTime,c.endTime,c.ownerJid,c.ownerResource," +
+		String expectedCollectionQuery = "SELECT c.conversationId,c.startTime,c.endTime,c.version,c.ownerJid,c.ownerResource," +
 				"c.withJid,c.withResource, c.subject,c.thread FROM archiveConversations AS c WHERE c.ownerJid = ? " +
 				"AND c.withJid = ? AND c.startTime = ? ";
 		
@@ -107,7 +107,7 @@ public class JdbcPersistenceManagerTest {
 		mockStatic(DbConnectionManager.class);
 		
 		// conversation query mocking
-		String expectedCollectionQuery = "SELECT c.conversationId,c.startTime,c.endTime,c.ownerJid,c.ownerResource," +
+		String expectedCollectionQuery = "SELECT c.conversationId,c.startTime,c.endTime,c.version,c.ownerJid,c.ownerResource," +
 				"c.withJid,c.withResource, c.subject,c.thread FROM archiveConversations AS c WHERE c.ownerJid = ? " +
 				"AND c.withJid = ? AND c.withResource = ? AND c.startTime = ? ";
 		
